@@ -20,9 +20,11 @@ Done by Korbin Wyssen and Nicholas Fuzesy
 Correctness:
 - The request notification from the borrower must be correct
 - An item entry’s information must be correct to what the lender set
+
 Robustness:
 - The system must show an error message if the lender attempts to set the return date to before the borrowing start date
 - The system must show an error message if the lender attempts to private an item while the item is currently on loan
+
 Time Efficiency:
 - The system must take no longer than 2 seconds to redirect the lender to the item view page
 - The system must take no longer than 5 seconds to list all items in the lender's personal library
@@ -40,9 +42,11 @@ Time Efficiency:
 Correctness:
 - The request response notification from the lender must be correct
 - Borrower must not be able to see hidden (not whitelisted/blacklisted) items in a lender's personal library
+
 Robustness:
 - The system must show an error message when a borrower attempts to request an item already being borrowed
 - The system must show an error message when a borrower attempts to access an item’s page that is not avaliable to them (the item is either blacklisted or not whitelisted for borrowing by the lender)
+
 Time Efficiency:
 - The system should take no longer than 3 seconds to show the borrower's borrowed items history
 - The system should take no longer than 5 seconds to show results to a item search query
