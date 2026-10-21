@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <body>
+    <hr/>
+    <br/>
+    {% if request.user.is_authenticated %}
+    The current_user is  : {{request.user.username}}
+    <br/>>
+    The current_user is  : {{request.user.email}}
+    <br/>
+    <br/>
+    The type of the user is  : {{request.user.user_type}}
+    <br/>
+    <br/>
+    <a href="{% url 'logout' %}"> Logout </a>
+    <br/>
+    <hr/>
+    {% else %}
+    <br/>
+    <br/>
+    <a href="{% url 'login' %}"> Login </a>
+    <br/>
+    <hr/>
+    {% endif %}
+  </body>
+</html>

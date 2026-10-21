@@ -1,17 +1,22 @@
 from django.shortcuts import render
+from django.contrib.auth import logout
 
 from django.http import HttpResponse
 
 # Create your views here.
 
 def index(request):
-    return HttpResponse("Landing page here");
+    return render(request, "sclibrary/page_index.html");
 
 def register(request):
     return HttpResponse("Placeholder");
 
 def login(request):
     return HttpResponse("Placeholder");
+
+def logout_view(request):
+    logout(request)
+    index(request)
 
 def mainB(request):
     return HttpResponse("Placeholder");

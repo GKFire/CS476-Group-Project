@@ -5,6 +5,7 @@ from django.contrib import admin
 import sclibrary.models as SCLibraryModels
 
 
+admin.site.register(SCLibraryModels.UserAccount)
 admin.site.register(SCLibraryModels.Lender)
 admin.site.register(SCLibraryModels.Borrower)
 admin.site.register(SCLibraryModels.Library)

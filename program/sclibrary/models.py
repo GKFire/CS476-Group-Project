@@ -1,27 +1,144 @@
 from django.db import models
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
 # Create your models here.
 
-class Lender(models.Model):
-    username = models.CharField(max_length=64)
-    password_hash = models.CharField(max_length=256)
+class UserAccountManager(BaseUserManager):
+    def create_user(self, username, email, password=None):
+        if not email or len(email) <= 0:
+            raise ValueError("The email field is required to create an account!")
+        if not username or len(username) <= 0:
+            raise ValueError("The username field is required to create an account!")
+        if not password:
+            raise ValueError("A user MUST have a password associated with their account!")
 
-class Borrower(models.Model):
-    username = models.CharField(max_length=64)
-    password_hash = models.CharField(max_length=256)
+        user = self.model(
+            username = username,
+            email = self.normalize_email(email),
+        )
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, username, email, password):
+        user = self.create_user(
+            username = username,
+            email = self.normalize_email(email), 
+            password = password
+        )
+        user.is_admin = True
+        user.is_staff = True
+        user.is_superuser = True
+        user.user_type = UserAccount.Types.ADMIN
+        user.save(using = self._db)
+        return user
+
+class UserAccount(AbstractBaseUser):
+    class Types(models.TextChoices):
+        LENDER = "LENDER","lender"
+        BORROWER = "BORROWER","borrower"
+        ADMIN = "ADMIN","admin"
+    user_type = models.CharField(max_length = 15, choices=Types.choices, default=Types.BORROWER)
+    username = models.CharField(max_length=63,unique=True)
+    email = models.EmailField(verbose_name="email address",max_length=255,unique=True)
+    is_active = models.BooleanField(default=True)
+    is_admin = models.BooleanField(default=False)
+    is_staff = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
+
+    is_lender = models.BooleanField(default=False)
+    is_borrower = models.BooleanField(default=False)
+
+    USERNAME_FIELD="username"
+    EMAIL_FIELD="email"
+    REQUIRED_FIELDS= ["email"]
+
+    objects = UserAccountManager()
+
+    def __str__(self):
+        return str(self.username)
+
+    def has_perm(self, perm, obj=None):
+        return self.is_admin
+    def has_module_perms(self, app_label):
+        return True
+    def save(self, *args, **kwargs):
+        if not self.user_type or self.user_type == None:
+            self.user_type = UserAccount.Types.BORROWER
+        return super().save(*args, **kwargs)
+
+class BorrowerManager(models.Manager):
+    def create_user(self, username, email, password=None):
+        if not email or len(email) <= 0:
+            raise ValueError("The email field is required to create an account!")
+        if not username or len(username) <= 0:
+            raise ValueError("The username field is required to create an account!")
+        if not password:
+            raise ValueError("A user MUST have a password associated with their account!")
+
+        user = self.model(
+            username = username,
+            email = self.normalize_email(email),
+        )
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def get_queryset(self, *args, **kwargs):
+        queryset = super().get_queryset(*args, **kwargs)
+        return queryset.filter(user_type = UserAccount.Types.BORROWER)
+
+class Borrower(UserAccount):
+    objects = BorrowerManager()
+    
+    def save(self, *args, **kwargs):
+        self.user_type = UserAccount.Types.BORROWER
+        self.is_borrower = True
+        return super().save(*args, **kwargs)
+
+
+class LenderManager(models.Manager):
+    def create_user(self, username, email, password=None):
+        if not email or len(email) <= 0:
+            raise ValueError("The email field is required to create an account!")
+        if not username or len(username) <= 0:
+            raise ValueError("The username field is required to create an account!")
+        if not password:
+            raise ValueError("A user MUST have a password associated with their account!")
+
+        user = self.model(
+            username = username,
+            email = self.normalize_email(email),
+        )
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def get_queryset(self, *args, **kwargs):
+        queryset = super().get_queryset(*args, **kwargs)
+        return queryset.filter(user_type = UserAccount.Types.LENDER)
+
+class Lender(UserAccount):
+    objects = LenderManager()
+    
+    def save(self, *args, **kwargs):
+        self.user_type = UserAccount.Types.LENDER
+        self.is_borrower = True
+        return super().save(*args, **kwargs)
+
 
 class Library(models.Model):
-    name = models.CharField(max_length=64)
+    name = models.CharField(max_length=63)
     default_item_visibility = models.BooleanField()
     owner = models.ForeignKey(Lender, on_delete=models.CASCADE)
 
 class Item(models.Model):
     library = models.ForeignKey(Library, on_delete=models.CASCADE)
-    title = models.CharField(max_length=128)
+    title = models.CharField(max_length=127)
     release = models.DateField()
-    producer = models.CharField(max_length=128)
+    producer = models.CharField(max_length=127)
     thumbnail = models.ImageField()
-    condition = models.CharField(max_length=128)
+    condition = models.CharField(max_length=127)
     description = models.TextField()
     notes = models.TextField()
 
@@ -62,7 +179,7 @@ class Item(models.Model):
         ("Other", "Other"),
     ]
 
-    item_format = models.CharField(max_length=16, choices=FORMAT_CHOICES)
+    item_format = models.CharField(max_length=15, choices=FORMAT_CHOICES)
 
     AGE_RATING_CHOICES = [
         ("Y7", "Y-7"),
@@ -82,7 +199,7 @@ class Item(models.Model):
     ]
 
 
-    age_rating = models.CharField(max_length=16,choices=AGE_RATING_CHOICES)
+    age_rating = models.CharField(max_length=15,choices=AGE_RATING_CHOICES)
     addedDate = models.DateTimeField()
     lastModified = models.DateTimeField()
     is_visible = models.BooleanField()
@@ -100,7 +217,7 @@ class BorrowRequest(models.Model):
         ("CD", "Concluded"),
     ]
 
-    status = models.CharField(max_length=32, choices=STATUS_CHOICES, default="CD")
+    status = models.CharField(max_length=31, choices=STATUS_CHOICES, default="CD")
 
 class LenderMessage(models.Model):
     request = models.ForeignKey(BorrowRequest, on_delete=models.CASCADE)
@@ -119,14 +236,14 @@ class BorrowerWishList(models.Model):
 
 class LenderNotification(models.Model):
     recipient = models.ForeignKey(Lender, on_delete=models.CASCADE)
-    subject = models.CharField(max_length=128)
+    subject = models.CharField(max_length=127)
     description = models.TextField()
     has_viewed = models.BooleanField()
     timestamp = models.DateTimeField()
 
 class BorrowerNotification(models.Model):
     recipient = models.ForeignKey(Borrower, on_delete=models.CASCADE)
-    subject = models.CharField(max_length=128)
+    subject = models.CharField(max_length=127)
     description = models.TextField()
     has_viewed = models.BooleanField()
     timestamp = models.DateTimeField()
