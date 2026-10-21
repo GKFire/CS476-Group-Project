@@ -19,9 +19,6 @@ def mainB(request):
 def mainL(request):
     return HttpResponse("Placeholder");
 
-def login(request):
-    return HttpResponse("Placeholder");
-
 def viewItem(request):
     return HttpResponse("Placeholder");
 
@@ -50,7 +47,4 @@ def addItem(request):
     return HttpResponse("Placeholder");
 
 def validateRequest(request):
-    return HttpResponse("Placeholder");
-
-def viewBorrower(request):
     return HttpResponse("Placeholder");
