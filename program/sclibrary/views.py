@@ -53,3 +53,9 @@ def addItem(request):
 
 def validateRequest(request):
     return HttpResponse("Placeholder");
+
+def searchItem(request):
+    return HttpResponse("Placeholder");
+
+def sendBorrowRequest(request):
+    return HttpResponse("Placeholder");
