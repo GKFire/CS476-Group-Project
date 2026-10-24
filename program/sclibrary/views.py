@@ -4,7 +4,7 @@ from django.contrib.auth import logout
 from django.http import HttpResponse
 import sclibrary.models as SCLibraryModels
 
-
+# change testing commit
 # Create your views here.
 
 def index(request: HttpResponse):
