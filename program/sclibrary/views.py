@@ -7,14 +7,14 @@ import sclibrary.models as SCLibraryModels
 
 # Create your views here.
 
-def index(request):
+def index(request: HttpResponse):
     libraries = SCLibraryModels.Library.objects.all()
     return render(request, "sclibrary/page_index.html", {"libraries": libraries})
 
-def register(request):
+def register(request: HttpResponse):
     return HttpResponse("Placeholder")
 
-def login(request):
+def login(request: HttpResponse):
     return HttpResponse("Placeholder")
 
 def logout_view(request):
@@ -27,35 +27,35 @@ def home(request: HttpResponse):
 def mylibrary(request: HttpResponse):
     return HttpResponse("Placeholder")
 
-def viewItem(request, item_id: int):
+def viewItem(request: HttpResponse, item_id: int):
     return HttpResponse("Placeholder")
 
-def viewBorrow(request):
+def viewBorrow(request: HttpResponse):
     return HttpResponse("Placeholder")
 
-def viewWishlist(request):
+def viewWishlist(request: HttpResponse):
     return HttpResponse("Placeholder")
 
-def viewNotifs(request):
+def viewNotifs(request: HttpResponse):
     return HttpResponse("Placeholder")
 
-def viewBorrower(request):
+def viewBorrower(request: HttpResponse):
     return HttpResponse("Placeholder")
 
-def viewLender(request):
+def viewLender(request: HttpResponse):
     return HttpResponse("Placeholder")
 
-def rateItem(request):
+def rateItem(request: HttpResponse):
     return HttpResponse("Placeholder")
 
 def addItem(request: HttpResponse):
     return HttpResponse("page_additem.html")
 
-def validateRequest(request):
-    return HttpResponse("Placeholder");
+def validateRequest(request: HttpResponse):
+    return HttpResponse("Placeholder")
 
-def searchItem(request):
-    return HttpResponse("Placeholder");
+def searchItem(request: HttpResponse):
+    return HttpResponse("Placeholder")
 
-def sendBorrowRequest(request):
-    return HttpResponse("Placeholder");
+def sendBorrowRequest(request: HttpResponse):
+    return HttpResponse("Placeholder")
