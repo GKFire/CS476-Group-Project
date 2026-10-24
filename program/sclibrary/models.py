@@ -1,10 +1,11 @@
 from django.db import models
+from django.urls import reverse
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
 # Create your models here.
 
 class UserAccountManager(BaseUserManager):
-    def create_user(self, username, email, password=None):
+    def create_user(self, username: str, email: str, password):
         if not email or len(email) <= 0:
             raise ValueError("The email field is required to create an account!")
         if not username or len(username) <= 0:
@@ -13,17 +14,17 @@ class UserAccountManager(BaseUserManager):
             raise ValueError("A user MUST have a password associated with their account!")
 
         user = self.model(
-            username = username,
-            email = self.normalize_email(email),
+            username = username.lower(),
+            email = email.lower(),
         )
         user.set_password(password)
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, username, email, password):
+    def create_superuser(self, username: str, email: str, password):
         user = self.create_user(
-            username = username,
-            email = self.normalize_email(email), 
+            username = username.lower(),
+            email = email.lower(), 
             password = password
         )
         user.is_admin = True
@@ -38,9 +39,9 @@ class UserAccount(AbstractBaseUser):
         LENDER = "LENDER","lender"
         BORROWER = "BORROWER","borrower"
         ADMIN = "ADMIN","admin"
-    user_type = models.CharField(max_length = 15, choices=Types.choices, default=Types.BORROWER)
-    username = models.CharField(max_length=63,unique=True)
-    email = models.EmailField(verbose_name="email address",max_length=255,unique=True)
+    user_type = models.CharField(max_length=15, choices=Types.choices)
+    username = models.CharField(max_length=63, unique=True)
+    email = models.EmailField(verbose_name="email address", max_length=255, unique=True)
     is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
@@ -68,7 +69,7 @@ class UserAccount(AbstractBaseUser):
         return super().save(*args, **kwargs)
 
 class BorrowerManager(models.Manager):
-    def create_user(self, username, email, password=None):
+    def create_user(self, username: str, email: str, password=None):
         if not email or len(email) <= 0:
             raise ValueError("The email field is required to create an account!")
         if not username or len(username) <= 0:
@@ -77,8 +78,8 @@ class BorrowerManager(models.Manager):
             raise ValueError("A user MUST have a password associated with their account!")
 
         user = self.model(
-            username = username,
-            email = self.normalize_email(email),
+            username = username.lower(),
+            email = email.lower(),
         )
         user.set_password(password)
         user.save(using=self._db)
@@ -98,7 +99,7 @@ class Borrower(UserAccount):
 
 
 class LenderManager(models.Manager):
-    def create_user(self, username, email, password=None):
+    def create_user(self, username: str, email: str, password=None):
         if not email or len(email) <= 0:
             raise ValueError("The email field is required to create an account!")
         if not username or len(username) <= 0:
@@ -107,8 +108,8 @@ class LenderManager(models.Manager):
             raise ValueError("A user MUST have a password associated with their account!")
 
         user = self.model(
-            username = username,
-            email = self.normalize_email(email),
+            username = username.lower(),
+            email = email.lower(),
         )
         user.set_password(password)
         user.save(using=self._db)
@@ -123,21 +124,25 @@ class Lender(UserAccount):
     
     def save(self, *args, **kwargs):
         self.user_type = UserAccount.Types.LENDER
-        self.is_borrower = True
+        self.is_lender = True
+        if (len(Library.objects.filter(owner=self)) == 0):
+            Library.objects.create(name=self.username + "'s Library", owner=self)
         return super().save(*args, **kwargs)
 
-
 class Library(models.Model):
-    name = models.CharField(max_length=63)
-    default_item_visibility = models.BooleanField()
-    owner = models.ForeignKey(Lender, on_delete=models.CASCADE)
+    name = models.CharField(max_length=63,unique=True)
+    default_item_visibility = models.BooleanField(default=True)
+    owner = models.OneToOneField(Lender, on_delete=models.CASCADE, unique=True)
+
+    def __str__(self):
+        return self.name
 
 class Item(models.Model):
     library = models.ForeignKey(Library, on_delete=models.CASCADE)
     title = models.CharField(max_length=127)
     release = models.DateField()
     producer = models.CharField(max_length=127)
-    thumbnail = models.ImageField()
+    # thumbnail = models.ImageField(null=True)
     condition = models.CharField(max_length=127)
     description = models.TextField()
     notes = models.TextField()
@@ -198,14 +203,19 @@ class Item(models.Model):
         ("A", "A"),
     ]
 
-
     age_rating = models.CharField(max_length=15,choices=AGE_RATING_CHOICES)
-    addedDate = models.DateTimeField()
-    lastModified = models.DateTimeField()
-    is_visible = models.BooleanField()
+    addedDate = models.DateTimeField(auto_now_add=True)
+    lastModified = models.DateTimeField(auto_now=True)
+    is_visible = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.library.name + " - " + self.title
+
+    def get_absolute_url(self):
+        return reverse("view-item", kwargs={"pk": self.id})
 
 class BorrowRequest(models.Model):
-    borrower = models.ForeignKey(Borrower, on_delete=models.DO_NOTHING)
+    borrower = models.ForeignKey(Borrower, on_delete=models.SET_NULL, null=True)
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
     start_date = models.DateField()
     return_date = models.DateField()
@@ -219,32 +229,50 @@ class BorrowRequest(models.Model):
 
     status = models.CharField(max_length=31, choices=STATUS_CHOICES, default="CD")
 
+    def __str__(self):
+        return self.status + " - " + self.item.title + " - " + self.borrower.username
+
 class LenderMessage(models.Model):
     request = models.ForeignKey(BorrowRequest, on_delete=models.CASCADE)
     message = models.TextField()
-    timestamp = models.DateTimeField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.request.item.title + " - " + self.timestamp
 
 class BorrowerMessage(models.Model):
     request = models.ForeignKey(BorrowRequest, on_delete=models.CASCADE)
     message = models.TextField()
-    timestamp = models.DateTimeField()
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.request.item.title + " - " + self.timestamp
 
 class BorrowerWishList(models.Model):
     borrower = models.ForeignKey(Borrower, on_delete=models.CASCADE)
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
-    added = models.DateTimeField()
+    added = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.borrower.username + " - " + self.item.title
 
 class LenderNotification(models.Model):
     recipient = models.ForeignKey(Lender, on_delete=models.CASCADE)
     subject = models.CharField(max_length=127)
     description = models.TextField()
-    has_viewed = models.BooleanField()
-    timestamp = models.DateTimeField()
+    has_viewed = models.BooleanField(default=False)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.subject + " - " + self.recipient.username
 
 class BorrowerNotification(models.Model):
     recipient = models.ForeignKey(Borrower, on_delete=models.CASCADE)
     subject = models.CharField(max_length=127)
     description = models.TextField()
-    has_viewed = models.BooleanField()
-    timestamp = models.DateTimeField()
+    has_viewed = models.BooleanField(default=False)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.subject + " - " + self.recipient.username
 

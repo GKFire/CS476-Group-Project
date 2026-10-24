@@ -1,26 +1,58 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html>
+  <head>
+    <title>SCLibrary</title>
+    <link rel="stylesheet" href="{% static 'style.css' %}"/>
+  </head>
   <body>
-    <hr/>
-    <br/>
-    {% if request.user.is_authenticated %}
-    The current_user is  : {{request.user.username}}
-    <br/>>
-    The current_user is  : {{request.user.email}}
-    <br/>
-    <br/>
-    The type of the user is  : {{request.user.user_type}}
-    <br/>
-    <br/>
-    <a href="{% url 'logout' %}"> Logout </a>
-    <br/>
-    <hr/>
-    {% else %}
-    <br/>
-    <br/>
-    <a href="{% url 'login' %}"> Login </a>
-    <br/>
-    <hr/>
-    {% endif %}
+    <div class="container">
+      <div class="main-navbar">
+          <ul>
+            <li><a href="{% url 'mylibrary' %}">My Library</a></li>
+            <li><a href="{% url 'mylibrary-requests' %}">View Requests</a></li>
+            <li><a href="{% url 'view-notifications' %}">Notifications</a></li>
+            {% if request.user.is_authenticated %}
+              <li><a href="{% url 'logout' %}">Sign out</a></li>
+            {% else %}
+              <li><a href="{% url 'login' %}">Sign in</a></li>
+            {% endif %}
+          </ul>
+        </div>
+      <div class="view-container">
+        <div class="side-panel">
+          <li><a href="{% url 'add-item' %}">Add new Item</a></li>
+          <li><a href="{% url 'mylibrary-requests' %}">View Requests</a>
+            <ul>
+              <li><a href="{% url 'mylibrary-requests' %}">Ongoing Loans</a></li>
+              <li><a href="{% url 'mylibrary-requests' %}">Overdue Loans</a></li>
+            </ul>
+          </li>
+        </div>
+        <div class="main-view">
+          {% for library in libraries %}
+          <div>
+            <p>{{ library.name }} -- {{ library.default_item_visibility }} -- Owner: {{ library.owner.username }} | {{ library.owner.email }}</p>
+            <ul>
+              {% for item in library.item_set.all %}
+              <li><p>{{ item.id }}:{{ item.title }} -- {{ item.producer }} -- {{ item.item_format }} -- {{ item.age_rating }}</p></li>
+              {% endfor %}
+            </ul>
+          </div>
+          {% endfor %}
+        </div>
+        <div class="options-panel">
+          {% if request.user.is_authenticated %}
+            <p>Currently Logged in as: {{request.user.username}} -- {{request.user.user_type}}</p>
+          {% else %}
+            <p>You are currently not logged in</p>
+          {% endif %}
+        </div>
+        <div class="footer">
+
+        </div>
+      </div>
+    </div>
   </body>
 </html>
