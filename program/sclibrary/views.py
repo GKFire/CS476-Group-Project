@@ -22,7 +22,7 @@ def logout_view(request):
     index(request)
 
 def home(request: HttpResponse):
-    return HttpResponse("Placeholder")
+    return render(request, "sclibrary/template_page_overview.html")
 
 def mylibrary(request: HttpResponse):
     return HttpResponse("Placeholder")
