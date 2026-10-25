@@ -1,0 +1,20 @@
+{% extends "sclibrary/base_simple.html" %}
+{% block content %}
+<h4>{% if is_lender %}Requests on my items{% else %}My requests{% endif %}</h4>
+<p>
+  <a href="?">All</a> | <a href="?status=RQ">Pending</a> | <a href="?status=AC">Ongoing loans</a> |
+  <a href="?status=RJ">Declined</a> | <a href="?status=CD">Concluded</a>
+</p>
+<table>
+  <tr><th>Item</th>{% if is_lender %}<th>Borrower</th>{% endif %}<th>Start</th><th>Return</th><th>Status</th><th></th></tr>
+  {% for r in requests %}
+  <tr>
+    <td>{{ r.item.title }}</td>
+    {% if is_lender %}<td>{{ r.borrower.username|default:"(deleted user)" }}</td>{% endif %}
+    <td>{{ r.start_date }}</td><td>{{ r.return_date }}</td>
+    <td>{{ r.get_status_display }}{% if r.pk in overdue_ids %} <strong>(OVERDUE)</strong>{% endif %}</td>
+    <td><a href="{% url 'view-request' r.pk %}">Open</a></td>
+  </tr>
+  {% empty %}<tr><td colspan="6">No requests.</td></tr>{% endfor %}
+</table>
+{% endblock %}

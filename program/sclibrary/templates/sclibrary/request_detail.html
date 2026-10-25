@@ -1,0 +1,21 @@
+{% extends "sclibrary/base_simple.html" %}
+{% block content %}
+<h4>Request for "{{ req.item.title }}"</h4>
+<p>Borrower: {{ req.borrower.username|default:"(deleted user)" }}<br>
+   Start: {{ req.start_date }} &middot; Return: {{ req.return_date }}<br>
+   Status: {{ req.get_status_display }}{% if overdue %} <strong>(OVERDUE)</strong>{% endif %}</p>
+
+{% if is_lender %}
+  <form method="post" action="{% url 'validate-request' req.pk %}">
+    {% csrf_token %}
+    {% if req.status == "RQ" %}
+      <label>Confirm / change return date {{ form.return_date }}</label>
+      <button name="action" value="accept">Accept</button>
+      <button name="action" value="decline">Decline</button>
+    {% elif req.status == "AC" %}
+      <button name="action" value="returned">Mark returned</button>
+    {% endif %}
+  </form>
+{% endif %}
+<p><a href="{% url 'myprofile-requests' %}">Back to requests</a></p>
+{% endblock %}

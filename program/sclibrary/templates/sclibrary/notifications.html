@@ -1,0 +1,10 @@
+{% extends "sclibrary/base_simple.html" %}
+{% block content %}
+<h4>Notifications</h4>
+<form method="post" action="{% url 'notifications-mark-read' %}">{% csrf_token %}<button>Mark all as read</button></form>
+<ul>
+  {% for n in notifications %}
+  <li>{% if not n.has_viewed %}<strong>NEW</strong> {% endif %}<b>{{ n.subject }}</b> ({{ n.timestamp }})<br>{{ n.description }}</li>
+  {% empty %}<li>No notifications.</li>{% endfor %}
+</ul>
+{% endblock %}
