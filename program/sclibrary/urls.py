@@ -11,22 +11,28 @@ urlpatterns = [
     path("register/", views.register, name="register"),
     path("home/", views.home, name="home"),
 
+    path("home/requests/", views.borrowerRequests, name="borrower-view-requests"),
+
     path("mylibrary/", views.mylibrary, name="mylibrary"),
-    path("mylibrary/requests/", views.mylibrary, name="mylibrary-requests"),
+    path("mylibrary/requests/", views.mylibrary, name="mylibrary-view-requests"),
 
-    path("item/<int:pk>/", views.viewItem, name="view-item"),
-    path("item/add/", ItemForm.CreateItem.as_view(), name="add-item"),
-    path("item/<int:pk>/edit/", ItemForm.EditItem.as_view(), name="edit-item"),
-    path("item/<int:pk>/delete/", ItemForm.DeleteItem.as_view(), name="delete-item"),
-    path("view/<int:pk>/rate/", views.rateItem, name="rate-item"),
+    path("search/", views.search, name="search"),
+    path("search/library/<int:library_pk>", views.searchLibrary, name="search"),
 
-    path("item/<int:pk>/request/", views.viewBorrow, name="view-requests"),
-    path("item/<int:item_id>/request/<int:request_id>/", views.viewBorrow, name="view-request"),
-    path("view/<int:item_id>/request/<int:request_id>/validate/", views.validateRequest, name="validate-request"),
+    path("item/<int:item_pk>/", views.viewItem, name="view-item"),
+    path("item/create/", views.createItem, name="create-item"),
+    path("item/<int:item_pk>/edit/", views.editItem, name="edit-item"),
+    path("item/<int:item_pk>/delete/", views.deleteItem, name="delete-item"),
+    path("item/<int:item_pk>/rate/", views.rateItem, name="rate-item"),
+
+    path("item/<int:item_pk>/requests/", views.viewBorrow, name="item-view-requests"),
+    path("item/<int:item_pk>/requests/create/", views.sendBorrowRequest, name="create-request"),
+    path("request/<int:request_pk>/", views.viewBorrow, name="view-request"),
+    path("request/<int:request_pk>/validate/", views.validateRequest, name="validate-request"),
     
     path("wishlist/", views.viewWishlist, name="view-wishlist"),
     path("notifications/", views.viewNotifs, name="view-notifications"),
     
-    path("user/borrower/<int:user_id>/", views.viewBorrower, name="view-borrower"),
-    path("user/lender/<int:user_id>/", views.viewLender, name="view-lender"),
+    path("user/borrower/<int:user_pk>/", views.viewBorrower, name="view-borrower"),
+    path("user/lender/<int:user_pk>/", views.viewLender, name="view-lender"),
 ]

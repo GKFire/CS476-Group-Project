@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+{% load static %}
 <html>
   <head>
     <title>SCLibrary</title>
@@ -20,7 +21,7 @@
                     <a href="#" class="brand-logo right">SCLibrary</a>
                     <ul id="nav-mobile" class="left hide-on-med-and-down">
                         <li><a href="{% url 'mylibrary' %}">My Library</a></li>
-                        <li><a href="{% url 'mylibrary-requests'%}">Requests</a></li>
+                        <li><a href="{% url 'mylibrary-view-requests'%}">Requests</a></li>
                         <li><a href="{% url 'view-notifications'%}">Notifications</a></li>
                         <li><a href="{% url 'logout' %}">Sign out</a></li>
                     </ul>
@@ -31,7 +32,7 @@
                     <ul>
                         <li><a href="{% url 'mylibrary' %}">Library Overview</a></li>
                         <li><a href="{% url 'mylibrary' %}">Library Items</a></li>
-                        <li><a href="{% url 'add-item' %}">Create New Item</a></li>
+                        <li><a href="{% url 'create-item' %}">Create New Item</a></li>
                     </ul>
                     This would be the navigation panel
                 </div>
