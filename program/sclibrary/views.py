@@ -8,7 +8,6 @@ import sclibrary.models as SCLibraryModels
 
 import sclibrary.forms.items as ItemForm
 
-# change testing commit
 # Create your views here.
 
 def index(request: HttpRequest):
@@ -29,14 +28,19 @@ def logout_view(request):
 def home(request: HttpRequest):
     return render(request, "sclibrary/template_page_overview.html")
 
-def borrowerRequests(request: HttpRequest):
-     return HttpRequest("Placeholder")
+@login_required
+def myprofile(request: HttpRequest):
+    if (request.user.user_type == SCLibraryModels.UserAccount.Types.LENDER):
+        return HttpResponse(request.user.lender.library)
+    elif (request.user.user_type == SCLibraryModels.UserAccount.Types.BORROWER):
+        return HttpResponse("Placeholder")
 
 @login_required
-def mylibrary(request: HttpRequest):
-    if (request.user.user_type != SCLibraryModels.UserAccount.Types.LENDER):
-        return error_borrower_attempted_to_access_lender_only_page(request)
-    return HttpResponse(request.user.lender.library)
+def myprofileRequests(request: HttpRequest):
+    if (request.user.user_type == SCLibraryModels.UserAccount.Types.LENDER):
+        return HttpResponse(request.user.lender.library)
+    elif (request.user.user_type == SCLibraryModels.UserAccount.Types.BORROWER):
+        return HttpResponse("Placeholder")
 
 @login_required
 def search(request: HttpRequest):

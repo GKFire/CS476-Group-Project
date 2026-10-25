@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 {% load static %}
 <html>
@@ -11,6 +12,11 @@
             max-width: 1920px;
             width: 90%;
         }
+
+        .long {
+            min-height: calc(100vh - 80px) !important;
+            box-sizing: border-box;
+        }
     </style>
   </head>
   <body>
@@ -20,29 +26,34 @@
                 <div class="nav-wrapper">
                     <a href="#" class="brand-logo right">SCLibrary</a>
                     <ul id="nav-mobile" class="left hide-on-med-and-down">
-                        <li><a href="{% url 'mylibrary' %}">My Library</a></li>
-                        <li><a href="{% url 'mylibrary-view-requests'%}">Requests</a></li>
+                        <li><a href="{% url 'myprofile' %}">My Profile</a></li>
+                        <li><a href="{% url 'myprofile-requests'%}">Requests</a></li>
                         <li><a href="{% url 'view-notifications'%}">Notifications</a></li>
                         <li><a href="{% url 'logout' %}">Sign out</a></li>
                     </ul>
                 </div>
             </nav>
             <div class="row">
-                <div class="col s3 m3 l2 xl2 card-panel teal lighten-2">
+                <div class="col s3 m3 l2 xl2 card-panel teal lighten-2 long">
                     <ul>
-                        <li><a href="{% url 'mylibrary' %}">Library Overview</a></li>
-                        <li><a href="{% url 'mylibrary' %}">Library Items</a></li>
-                        <li><a href="{% url 'create-item' %}">Create New Item</a></li>
+                        <div class="button">
+                            <li><a href="{% url 'add-item' %}" style="color:black">Create New Item</a></li>
+                        </div>
                     </ul>
                     This would be the navigation panel
                 </div>
-                <div class="col s7 m7 l8 xl9">
+                <div class="col s7 m7 l8 xl9 long mainBorder">
                     This would be the main content panel
                 </div>
-                <div class="col s2 m2 l2 xl1">
+                <div class="col s2 m2 l2 xl1 long padded">
                     This would be the options panel
                 </div>
             </div>
+            <nav class="bottom-nav">
+                <div class="nav-wrapper">
+                    2026 CS 476 Software Development Project
+                </div>
+            </nav>
     </div>
 
   </body>

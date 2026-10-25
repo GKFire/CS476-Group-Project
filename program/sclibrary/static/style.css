@@ -1,3 +1,22 @@
+.bottom-nav {
+    height: 50px;
+    line-height: 50px;
+    margin-top: 0;
+    text-align: center;
+}
+
+.bottom-nav .nav-wrapper {
+    height: 50px;
+}
+
+.button {
+    padding: 10px !important;
+    border: 5px solid rgb(35, 36, 38);
+    border-radius: 5px;
+    background-color: rgb(125, 127, 133);
+    box-sizing: border-box;
+    text-align: center;
+}
 .container {
     height: 900px;
 }
@@ -6,6 +25,15 @@
     border: 1px rgb(43, 79, 177) solid;
     width: 100%;
     margin-bottom: 2%;
+}
+
+.container > .row {
+    margin-bottom: 0;
+}
+
+.long {
+    min-height: calc(100vh - 80px) !important;
+    box-sizing: border-box;
 }
 
 .main-navbar {
@@ -32,6 +60,12 @@
     width: 30%;
 }
 
+.mainBorder {
+    padding: 10px !important;
+    border: 5px solid rgb(43, 79, 177);
+    box-sizing: border-box;
+}
+
 div.logo > img {
     grid-column-start: 2;
     grid-column-end: 2;
@@ -44,7 +78,6 @@ div.logo > img {
     grid-template-columns: 2fr 6fr 1fr;
     grid-template-rows: 1fr;
     height: 80%;
-
     column-gap: 2%;
 }
 
@@ -61,4 +94,8 @@ div.logo > img {
 .options-panel {
     grid-column-start: 3;
     grid-column-end: 3;
+}
+
+.padded {
+    padding: 10px !important;
 }
