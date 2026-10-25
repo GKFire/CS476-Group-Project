@@ -24,7 +24,7 @@ def logout_view(request):
 def home(request: HttpResponse):
     return render(request, "sclibrary/template_page_overview.html")
 
-def mylibrary(request: HttpResponse):
+def myprofile(request: HttpResponse):
     return HttpResponse("Placeholder")
 
 def viewItem(request: HttpResponse, item_id: int):

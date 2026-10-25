@@ -42,7 +42,7 @@ div.logo > img {
 .view-container {
     display: grid;
     grid-template-columns: 2fr 6fr 1fr;
-    grid-template-rows: 1fr;
+    grid-template-rows: 10fr;
     height: 80%;
 
     column-gap: 2%;

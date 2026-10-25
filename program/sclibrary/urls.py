@@ -11,7 +11,7 @@ urlpatterns = [
     path("register/", views.register, name="register"),
     path("home/", views.home, name="home"),
 
-    path("mylibrary/", views.mylibrary, name="mylibrary"),
+    path("myprofile/", views.myprofile, name="myprofile"),
     path("mylibrary/requests/", views.mylibrary, name="mylibrary-requests"),
 
     path("item/<int:pk>/", views.viewItem, name="view-item"),
