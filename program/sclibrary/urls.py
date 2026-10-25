@@ -12,7 +12,7 @@ urlpatterns = [
     path("home/", views.home, name="home"),
 
     path("myprofile/", views.myprofile, name="myprofile"),
-    path("mylibrary/requests/", views.mylibrary, name="mylibrary-requests"),
+    path("myprofile/requests/", views.myprofile, name="myprofile-requests"),
 
     path("item/<int:pk>/", views.viewItem, name="view-item"),
     path("item/add/", ItemForm.CreateItem.as_view(), name="add-item"),
