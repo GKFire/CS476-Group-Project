@@ -11,7 +11,7 @@
       <div class="main-navbar">
           <ul>
             <li><a href="{% url 'mylibrary' %}">My Library</a></li>
-            <li><a href="{% url 'mylibrary-requests' %}">View Requests</a></li>
+            <li><a href="{% url 'mylibrary-view-requests' %}">View Requests</a></li>
             <li><a href="{% url 'view-notifications' %}">Notifications</a></li>
             {% if request.user.is_authenticated %}
               <li><a href="{% url 'logout' %}">Sign out</a></li>
@@ -22,11 +22,11 @@
         </div>
       <div class="view-container">
         <div class="side-panel">
-          <li><a href="{% url 'add-item' %}">Add new Item</a></li>
-          <li><a href="{% url 'mylibrary-requests' %}">View Requests</a>
+          <li><a href="{% url 'create-item' %}">Add new Item</a></li>
+          <li><a href="{% url 'mylibrary-view-requests' %}">View Requests</a>
             <ul>
-              <li><a href="{% url 'mylibrary-requests' %}">Ongoing Loans</a></li>
-              <li><a href="{% url 'mylibrary-requests' %}">Overdue Loans</a></li>
+              <li><a href="{% url 'mylibrary-view-requests' %}">Ongoing Loans</a></li>
+              <li><a href="{% url 'mylibrary-view-requests' %}">Overdue Loans</a></li>
             </ul>
           </li>
         </div>

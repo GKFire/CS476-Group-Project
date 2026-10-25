@@ -39,6 +39,7 @@ class UserAccount(AbstractBaseUser):
         LENDER = "LENDER","lender"
         BORROWER = "BORROWER","borrower"
         ADMIN = "ADMIN","admin"
+    
     user_type = models.CharField(max_length=15, choices=Types.choices)
     username = models.CharField(max_length=63, unique=True)
     email = models.EmailField(verbose_name="email address", max_length=255, unique=True)
@@ -125,8 +126,6 @@ class Lender(UserAccount):
     def save(self, *args, **kwargs):
         self.user_type = UserAccount.Types.LENDER
         self.is_lender = True
-        if (len(Library.objects.filter(owner=self)) == 0):
-            Library.objects.create(name=self.username + "'s Library", owner=self)
         return super().save(*args, **kwargs)
 
 class Library(models.Model):
@@ -212,7 +211,7 @@ class Item(models.Model):
         return self.library.name + " - " + self.title
 
     def get_absolute_url(self):
-        return reverse("view-item", kwargs={"pk": self.id})
+        return reverse("view-item", kwargs={"item_id": self.id})
 
 class BorrowRequest(models.Model):
     borrower = models.ForeignKey(Borrower, on_delete=models.SET_NULL, null=True)
