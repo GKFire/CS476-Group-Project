@@ -21,4 +21,4 @@ class EditItem(LoginRequiredMixin, UpdateView):
 
 class DeleteItem(LoginRequiredMixin, DeleteView):
     model = SCLibraryModels.Item
-    success_url = reverse_lazy("mylibrary")
+    success_url = reverse_lazy("myprofile")

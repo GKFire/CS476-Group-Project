@@ -48,9 +48,6 @@ class UserAccount(AbstractBaseUser):
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
 
-    is_lender = models.BooleanField(default=False)
-    is_borrower = models.BooleanField(default=False)
-
     USERNAME_FIELD="username"
     EMAIL_FIELD="email"
     REQUIRED_FIELDS= ["email"]
@@ -95,7 +92,6 @@ class Borrower(UserAccount):
     
     def save(self, *args, **kwargs):
         self.user_type = UserAccount.Types.BORROWER
-        self.is_borrower = True
         return super().save(*args, **kwargs)
 
 
@@ -124,9 +120,10 @@ class Lender(UserAccount):
     objects = LenderManager()
     
     def save(self, *args, **kwargs):
+        is_new = self.id is None
         self.user_type = UserAccount.Types.LENDER
-        self.is_lender = True
         return super().save(*args, **kwargs)
+
 
 class Library(models.Model):
     name = models.CharField(max_length=63,unique=True)
@@ -142,9 +139,9 @@ class Item(models.Model):
     release = models.DateField()
     producer = models.CharField(max_length=127)
     # thumbnail = models.ImageField(null=True)
-    condition = models.CharField(max_length=127)
-    description = models.TextField()
-    notes = models.TextField()
+    condition = models.CharField(max_length=127,null=True)
+    description = models.TextField(null=True)
+    notes = models.TextField(null=True)
 
     FORMAT_CHOICES = [
         ("Video Game", (
@@ -226,7 +223,7 @@ class BorrowRequest(models.Model):
         ("CD", "Concluded"),
     ]
 
-    status = models.CharField(max_length=31, choices=STATUS_CHOICES, default="CD")
+    status = models.CharField(max_length=31, choices=STATUS_CHOICES, default="RQ")
 
     def __str__(self):
         return self.status + " - " + self.item.title + " - " + self.borrower.username

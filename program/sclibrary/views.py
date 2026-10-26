@@ -7,39 +7,38 @@ from django.http import HttpRequest, HttpResponse, HttpResponseForbidden
 import sclibrary.models as SCLibraryModels
 
 import sclibrary.forms.items as ItemForm
+import sclibrary.forms.user as UserForm
+
+
+USER_TYPES = SCLibraryModels.UserAccount.Types
+
 
 # Create your views here.
 
 def index(request: HttpRequest):
     libraries = SCLibraryModels.Library.objects.all()
-    return render(request, "sclibrary/page_index.html", {"libraries": libraries})
+    return render(request, "sclibrary/page_index.html")
 
 def register(request: HttpRequest):
-    return HttpResponse("Placeholder")
-
-def login(request: HttpRequest):
-    return HttpResponse("Placeholder")
-
-def logout_view(request):
-    logout(request)
-    index(request)
+    return UserForm.CreateUser.as_view()(request)
 
 @login_required
 def home(request: HttpRequest):
-    return render(request, "sclibrary/template_page_overview.html")
+    libraries = SCLibraryModels.Library.objects.all()
+    return render(request, "sclibrary/page_home.html", {"libraries": libraries, "user_type": request.user.user_type})
 
 @login_required
 def myprofile(request: HttpRequest):
-    if (request.user.user_type == SCLibraryModels.UserAccount.Types.LENDER):
+    if (request.user.user_type == USER_TYPES.LENDER):
         return HttpResponse(request.user.lender.library)
-    elif (request.user.user_type == SCLibraryModels.UserAccount.Types.BORROWER):
+    elif (request.user.user_type == USER_TYPES.BORROWER):
         return HttpResponse("Placeholder")
 
 @login_required
 def myprofileRequests(request: HttpRequest):
-    if (request.user.user_type == SCLibraryModels.UserAccount.Types.LENDER):
+    if (request.user.user_type == USER_TYPES.LENDER):
         return HttpResponse(request.user.lender.library)
-    elif (request.user.user_type == SCLibraryModels.UserAccount.Types.BORROWER):
+    elif (request.user.user_type == USER_TYPES.BORROWER):
         return HttpResponse("Placeholder")
 
 @login_required
@@ -51,11 +50,17 @@ def searchLibrary(request: HttpRequest, library_pk: int):
     library = SCLibraryModels.Library.objects.filter(id=library_pk).first()
     if (library == None):
         return HttpResponse("Library doesn't exist")
-    return HttpResponse(library.item_set.add().values().to_string())
+    return HttpResponse(library.item_set.all().values())
 
 @login_required
 def viewItem(request: HttpRequest, item_pk: int):
     item = get_object_or_404(SCLibraryModels.Item, pk=item_pk)
+
+    if request.user.user_type == USER_TYPES.LENDER and request.user.lender != item.library.owner:
+        return HttpResponseForbidden("You are not the owner of this item, and thus are not allowed to view it")
+    if item.is_visible == False and request.user.user_type == USER_TYPES.BORROWER:
+        return HttpResponseForbidden("This item has been hidden by it's owner")
+
     return JsonResponse({
         "title": item.title,
         "library": item.library.name,
@@ -69,19 +74,19 @@ def viewItem(request: HttpRequest, item_pk: int):
 
 @login_required
 def createItem(request: HttpRequest):
-    if (request.user.user_type != SCLibraryModels.UserAccount.Types.LENDER):
+    if (request.user.user_type != USER_TYPES.LENDER):
             return error_borrower_attempted_to_access_lender_only_page(request)
     return ItemForm.CreateItem.as_view()(request)
 
 @login_required
 def editItem(request: HttpRequest, item_pk: int):
-    if (request.user.user_type != SCLibraryModels.UserAccount.Types.LENDER):
+    if (request.user.user_type != USER_TYPES.LENDER):
             return error_borrower_attempted_to_access_lender_only_page(request)
     return ItemForm.EditItem.as_view()(request, pk=item_pk)
 
 @login_required
 def deleteItem(request: HttpRequest, item_pk: int):
-    if (request.user.user_type != SCLibraryModels.UserAccount.Types.LENDER):
+    if (request.user.user_type != USER_TYPES.LENDER):
             return error_borrower_attempted_to_access_lender_only_page(request)
     return ItemForm.DeleteItem.as_view()(request, pk=item_pk)
 
@@ -99,15 +104,15 @@ def viewBorrow(request: HttpRequest, item_pk: int):
 
 @login_required
 def viewWishlist(request: HttpRequest):
-    if (request.user.user_type != SCLibraryModels.UserAccount.Types.BORROWER):
+    if (request.user.user_type != USER_TYPES.BORROWER):
         return error_lender_attempted_to_access_borrower_only_page(request)
     return HttpResponse(request.user.borrowerwishlist_set.all().values().to_string())
 
 @login_required
 def viewNotifs(request: HttpRequest):
-    if (request.user.user_type == SCLibraryModels.UserAccount.Types.BORROWER):
+    if (request.user.user_type == USER_TYPES.BORROWER):
         return HttpResponse(request.user.borrower.borrowernotification_set.all().values())
-    elif (request.user.user_type == SCLibraryModels.UserAccount.Types.LENDER):
+    elif (request.user.user_type == USER_TYPES.LENDER):
         return HttpResponse(request.user.lender.lendernotification_set.all().values())
     else:
         return HttpResponse("Your account does not support notifications")

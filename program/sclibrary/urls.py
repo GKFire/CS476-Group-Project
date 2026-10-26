@@ -2,20 +2,19 @@ from django.urls import path
 from django.contrib.auth.views import LoginView, LogoutView
 from django.conf import settings
 from . import views
-import sclibrary.forms.items as ItemForm
 
 urlpatterns = [
-    path("", views.index, name="index"),
+    path("", views.index, name="index"), # only seen by new users
     path("login/", LoginView.as_view(template_name="sclibrary/page_login.html"), name="login"),
     path("logout/", LogoutView.as_view(), name="logout"),
     path("register/", views.register, name="register"),
-    path("home/", views.home, name="home"),
+    path("home/", views.home, name="home"), # default for logged-in users
 
     path("myprofile/", views.myprofile, name="myprofile"), # borrower sees list of currently borrowed items, lender sees list of items in their library
     path("myprofile/requests/", views.myprofileRequests, name="myprofile-requests"), # borrower sees list of requests assoicated with them, lender sees list of requests on items they own
 
     path("search/", views.search, name="search"), # borrower only
-    path("search/library/<int:library_pk>", views.searchLibrary, name="search"), # borrower only
+    path("search/library/<int:library_pk>", views.searchLibrary, name="search-library"), # borrower only
 
     path("item/<int:item_pk>/", views.viewItem, name="view-item"),
     path("item/create/", views.createItem, name="create-item"), # lender only

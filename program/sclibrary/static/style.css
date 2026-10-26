@@ -17,18 +17,14 @@
     box-sizing: border-box;
     text-align: center;
 }
-.container {
-    height: 900px;
+div.container {
+    height: auto;
+    max-width: none;
+    width: 90%;
 }
 
 .container > div {
-    border: 1px rgb(43, 79, 177) solid;
     width: 100%;
-    margin-bottom: 2%;
-}
-
-.container > .row {
-    margin-bottom: 0;
 }
 
 .long {
@@ -62,7 +58,6 @@
 
 .mainBorder {
     padding: 10px !important;
-    border: 5px solid rgb(43, 79, 177);
     box-sizing: border-box;
 }
 
@@ -98,4 +93,21 @@ div.logo > img {
 
 .padded {
     padding: 10px !important;
+}
+
+.collection {
+    padding: 0px 15px 10px 15px !important;
+    background-color: aliceblue;
+}
+
+.collection p {
+    color: black;
+}
+
+.collection h4 {
+    color: black;
+}
+
+.collection span {
+    color: black;
 }
