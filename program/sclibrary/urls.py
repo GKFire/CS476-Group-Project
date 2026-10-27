@@ -3,6 +3,7 @@ from django.contrib.auth.views import LoginView, LogoutView
 from django.conf import settings
 from . import views
 from . import borrower_views
+from . import request_views
 
 urlpatterns = [
     path("", views.index, name="index"), # only seen by new users
@@ -12,7 +13,7 @@ urlpatterns = [
     path("home/", views.home, name="home"), # default for logged-in users
 
     path("myprofile/", views.myprofile, name="myprofile"), # borrower sees list of currently borrowed items, lender sees list of items in their library
-    path("myprofile/requests/", views.myprofileRequests, name="myprofile-requests"), # borrower sees list of requests assoicated with them, lender sees list of requests on items they own
+    path("myprofile/requests/", request_views.request_list, name="myprofile-requests"), # borrower sees list of requests assoicated with them, lender sees list of requests on items they own
 
     path("search/", views.search, name="search"), # borrower only
     path("search/library/<int:library_pk>", views.searchLibrary, name="search-library"), # borrower only
@@ -25,11 +26,13 @@ urlpatterns = [
 
     path("item/<int:item_pk>/requests/", views.viewBorrow, name="item-view-requests"),
     path("item/<int:item_pk>/requests/create/", borrower_views.send_borrow_request, name="create-request"), # borrower only
-    path("request/<int:request_pk>/", views.viewBorrow, name="view-request"), # both borrower and lender can update (submit revision)
-    path("request/<int:request_pk>/validate/", views.validateRequest, name="validate-request"), # lender only
+    path("request/<int:request_pk>/", request_views.request_detail, name="view-request"), # both borrower and lender can update (submit revision)
+    path("request/<int:request_pk>/validate/", request_views.request_decision, name="validate-request"), # lender only
     
     path("wishlist/", views.viewWishlist, name="view-wishlist"), # borrower only
-    path("notifications/", views.viewNotifs, name="view-notifications"),
+    path("notifications/", request_views.notifications_list, name="view-notifications"),
+    path("notifications/read/", request_views.notifications_mark_read, name="notifications-mark-read"),
+    path("item/<int:item_pk>/visibility/", request_views.toggle_item_visibility, name="toggle-item-visibility"),
     
     path("user/borrower/<int:user_pk>/", views.viewBorrower, name="view-borrower"), # lender only
     path("user/lender/<int:user_pk>/", views.viewLender, name="view-lender"), # borrower only
