@@ -1,0 +1,11 @@
+{% extends "sclibrary/template_page_overview.html" %}
+
+{% block content %}
+<h5>Create an account</h5>
+<form method="post" class="sc-form">
+    {% csrf_token %}
+    {% include "sclibrary/_form_fields.html" %}
+    <button type="submit" class="btn red lighten-2">Register</button>
+</form>
+<p>Already have an account? <a href="{% url 'login' %}">Log in</a></p>
+{% endblock %}

@@ -1,0 +1,11 @@
+{% extends "sclibrary/template_page_overview.html" %}
+
+{% block content %}
+<h5>Request to borrow: {{ item.title }}</h5>
+<p>From {{ item.library.name }} ({{ item.get_item_format_display }})</p>
+<form method="post" class="sc-form">
+    {% csrf_token %}
+    {% include "sclibrary/_form_fields.html" %}
+    <button type="submit" class="btn red lighten-2">Send request</button>
+</form>
+{% endblock %}

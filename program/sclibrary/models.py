@@ -208,7 +208,7 @@ class Item(models.Model):
         return self.library.name + " - " + self.title
 
     def get_absolute_url(self):
-        return reverse("view-item", kwargs={"item_id": self.id})
+        return reverse("view-item", kwargs={"item_pk": self.id})
 
 class BorrowRequest(models.Model):
     borrower = models.ForeignKey(Borrower, on_delete=models.SET_NULL, null=True)

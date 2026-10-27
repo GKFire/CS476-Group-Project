@@ -1,9 +1,9 @@
 {% extends "sclibrary/template_page_overview.html" %}
 
 {% block content %}
-<form method="post">
+<form method="post" class="sc-form">
     {% csrf_token %}
-    {{ form.as_p }}
-    <input type="submit" value="Submit">
+    {% include "sclibrary/_form_fields.html" %}
+    <button type="submit" class="btn red lighten-2">Submit</button>
 </form>
 {% endblock %}
