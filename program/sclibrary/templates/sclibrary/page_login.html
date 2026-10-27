@@ -1,14 +1,11 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title></title>
-  </head>
-  <body>
-    <form method="post">
-      {% csrf_token %}
-      {{ form.as_p }}
-      <br/>
-      <input type="submit" value="Log In"/>
-    </form>
-  </body>
-</html>
+{% extends "sclibrary/template_page_overview.html" %}
+
+{% block content %}
+<h5>Log in</h5>
+<form method="post" class="sc-form">
+    {% csrf_token %}
+    {% include "sclibrary/_form_fields.html" %}
+    <button type="submit" class="btn red lighten-2">Log In</button>
+</form>
+<p>New to SCLibrary? <a href="{% url 'register' %}">Create an account</a></p>
+{% endblock %}
