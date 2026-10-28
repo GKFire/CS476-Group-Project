@@ -39,6 +39,7 @@ class UserAccount(AbstractBaseUser):
         LENDER = "LENDER","lender"
         BORROWER = "BORROWER","borrower"
         ADMIN = "ADMIN","admin"
+    
     user_type = models.CharField(max_length=15, choices=Types.choices)
     username = models.CharField(max_length=63, unique=True)
     email = models.EmailField(verbose_name="email address", max_length=255, unique=True)
@@ -46,9 +47,6 @@ class UserAccount(AbstractBaseUser):
     is_admin = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
-
-    is_lender = models.BooleanField(default=False)
-    is_borrower = models.BooleanField(default=False)
 
     USERNAME_FIELD="username"
     EMAIL_FIELD="email"
@@ -94,7 +92,6 @@ class Borrower(UserAccount):
     
     def save(self, *args, **kwargs):
         self.user_type = UserAccount.Types.BORROWER
-        self.is_borrower = True
         return super().save(*args, **kwargs)
 
 
@@ -123,11 +120,10 @@ class Lender(UserAccount):
     objects = LenderManager()
     
     def save(self, *args, **kwargs):
+        is_new = self.id is None
         self.user_type = UserAccount.Types.LENDER
-        self.is_lender = True
-        if (len(Library.objects.filter(owner=self)) == 0):
-            Library.objects.create(name=self.username + "'s Library", owner=self)
         return super().save(*args, **kwargs)
+
 
 class Library(models.Model):
     name = models.CharField(max_length=63,unique=True)
@@ -143,9 +139,9 @@ class Item(models.Model):
     release = models.DateField()
     producer = models.CharField(max_length=127)
     # thumbnail = models.ImageField(null=True)
-    condition = models.CharField(max_length=127)
-    description = models.TextField()
-    notes = models.TextField()
+    condition = models.CharField(max_length=127,null=True)
+    description = models.TextField(null=True)
+    notes = models.TextField(null=True)
 
     FORMAT_CHOICES = [
         ("Video Game", (
@@ -212,7 +208,7 @@ class Item(models.Model):
         return self.library.name + " - " + self.title
 
     def get_absolute_url(self):
-        return reverse("view-item", kwargs={"pk": self.id})
+        return reverse("view-item", kwargs={"item_pk": self.id})
 
 class BorrowRequest(models.Model):
     borrower = models.ForeignKey(Borrower, on_delete=models.SET_NULL, null=True)
@@ -227,7 +223,7 @@ class BorrowRequest(models.Model):
         ("CD", "Concluded"),
     ]
 
-    status = models.CharField(max_length=31, choices=STATUS_CHOICES, default="CD")
+    status = models.CharField(max_length=31, choices=STATUS_CHOICES, default="RQ")
 
     def __str__(self):
         return self.status + " - " + self.item.title + " - " + self.borrower.username

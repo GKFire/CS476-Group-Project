@@ -10,7 +10,7 @@ class CreateItem(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         if self.request.user.user_type != SCLibraryModels.UserAccount.Types.LENDER:
             return JsonResponse(form.errors, status=401)
-        library = SCLibraryModels.Library.objects.filter(owner=self.request.user)[0]
+        library = self.request.user.lender.library
         form.instance.library = library
         form.instance.is_visible = library.default_item_visibility
         return super().form_valid(form);
@@ -21,4 +21,4 @@ class EditItem(LoginRequiredMixin, UpdateView):
 
 class DeleteItem(LoginRequiredMixin, DeleteView):
     model = SCLibraryModels.Item
-    success_url = reverse_lazy("mylibrary")
+    success_url = reverse_lazy("myprofile")

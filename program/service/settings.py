@@ -82,8 +82,9 @@ DATABASES = {
 }
 
 AUTH_USER_MODEL = "sclibrary.UserAccount"
-LOGIN_REDIRECT_URL="/"
+LOGIN_REDIRECT_URL="/home/"
 LOGOUT_REDIRECT_URL="/"
+LOGIN_URL="/login/"
 
 
 # Password validation

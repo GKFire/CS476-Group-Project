@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+  <head>
+    <title>SCLibrary</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link rel="stylesheet" href="{% static 'style.css' %}"/>
+  </head>
+  <body>
+    <div class="container" style="height:auto">
+      <nav><div class="nav-wrapper">
+        <a href="{% url 'home' %}" class="brand-logo right">SCLibrary</a>
+        <ul class="left">
+          <li><a href="{% url 'myprofile' %}">My Profile</a></li>
+          <li><a href="{% url 'myprofile-requests' %}">Requests</a></li>
+          <li><a href="{% url 'view-notifications' %}">Notifications</a></li>
+          <li><a href="{% url 'logout' %}">Sign out</a></li>
+        </ul>
+      </div></nav>
+      {% for m in messages %}<div class="card-panel">{{ m }}</div>{% endfor %}
+      {% block content %}{% endblock %}
+    </div>
+  </body>
+</html>

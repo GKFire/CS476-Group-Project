@@ -2,31 +2,38 @@ from django.urls import path
 from django.contrib.auth.views import LoginView, LogoutView
 from django.conf import settings
 from . import views
-import sclibrary.forms.items as ItemForm
+from . import borrower_views
+from . import request_views
 
 urlpatterns = [
-    path("", views.index, name="index"),
+    path("", views.index, name="index"), # only seen by new users
     path("login/", LoginView.as_view(template_name="sclibrary/page_login.html"), name="login"),
-    path("logout/", LogoutView.as_view(), name="logout"),
-    path("register/", views.register, name="register"),
-    path("home/", views.home, name="home"),
+    path("logout/", borrower_views.logout_view, name="logout"),
+    path("register/", borrower_views.register, name="register"),
+    path("home/", views.home, name="home"), # default for logged-in users
 
-    path("mylibrary/", views.mylibrary, name="mylibrary"),
-    path("mylibrary/requests/", views.mylibrary, name="mylibrary-requests"),
+    path("myprofile/", views.myprofile, name="myprofile"), # borrower sees list of currently borrowed items, lender sees list of items in their library
+    path("myprofile/requests/", request_views.request_list, name="myprofile-requests"), # borrower sees list of requests assoicated with them, lender sees list of requests on items they own
 
-    path("item/<int:pk>/", views.viewItem, name="view-item"),
-    path("item/add/", ItemForm.CreateItem.as_view(), name="add-item"),
-    path("item/<int:pk>/edit/", ItemForm.EditItem.as_view(), name="edit-item"),
-    path("item/<int:pk>/delete/", ItemForm.DeleteItem.as_view(), name="delete-item"),
-    path("view/<int:pk>/rate/", views.rateItem, name="rate-item"),
+    path("search/", views.search, name="search"), # borrower only
+    path("search/library/<int:library_pk>", views.searchLibrary, name="search-library"), # borrower only
 
-    path("item/<int:pk>/request/", views.viewBorrow, name="view-requests"),
-    path("item/<int:item_id>/request/<int:request_id>/", views.viewBorrow, name="view-request"),
-    path("view/<int:item_id>/request/<int:request_id>/validate/", views.validateRequest, name="validate-request"),
+    path("item/<int:item_pk>/", views.viewItem, name="view-item"),
+    path("item/create/", views.createItem, name="create-item"), # lender only
+    path("item/<int:item_pk>/edit/", views.editItem, name="edit-item"), # lender only
+    path("item/<int:item_pk>/delete/", views.deleteItem, name="delete-item"), # lender only
+    path("item/<int:item_pk>/rate/", views.rateItem, name="rate-item"), # borrower can append, lender can only view
+
+    path("item/<int:item_pk>/requests/", views.viewBorrow, name="item-view-requests"),
+    path("item/<int:item_pk>/requests/create/", borrower_views.send_borrow_request, name="create-request"), # borrower only
+    path("request/<int:request_pk>/", request_views.request_detail, name="view-request"), # both borrower and lender can update (submit revision)
+    path("request/<int:request_pk>/validate/", request_views.request_decision, name="validate-request"), # lender only
     
-    path("wishlist/", views.viewWishlist, name="view-wishlist"),
-    path("notifications/", views.viewNotifs, name="view-notifications"),
+    path("wishlist/", views.viewWishlist, name="view-wishlist"), # borrower only
+    path("notifications/", request_views.notifications_list, name="view-notifications"),
+    path("notifications/read/", request_views.notifications_mark_read, name="notifications-mark-read"),
+    path("item/<int:item_pk>/visibility/", request_views.toggle_item_visibility, name="toggle-item-visibility"),
     
-    path("user/borrower/<int:user_id>/", views.viewBorrower, name="view-borrower"),
-    path("user/lender/<int:user_id>/", views.viewLender, name="view-lender"),
+    path("user/borrower/<int:user_pk>/", views.viewBorrower, name="view-borrower"), # lender only
+    path("user/lender/<int:user_pk>/", views.viewLender, name="view-lender"), # borrower only
 ]
