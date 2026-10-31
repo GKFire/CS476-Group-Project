@@ -3,19 +3,18 @@
 
 
 {% block navigation %}
+    <ul class="options-list">
     {% if request.user.user_type == "LENDER" %}
-        <a href="{% url 'item-view-requests' item.id %}">View Requests for this Item</a>
-        <a href="{% url 'edit-item' item.id %}">Edit Item</a>
-        <a href="{% url 'delete-item' item.id %}">Delete Item</a>
+        <li><a class="waves-effect waves-light green btn" href="{% url 'item-view-requests' item.id %}">View Requests for this Item</a></li>
+        <li><a class="waves-effect waves-light green btn" href="{% url 'edit-item' item.id %}">Edit Item</a></li>
+        <li><a class="waves-effect waves-light green btn" href="{% url 'delete-item' item.id %}">Delete Item</a></li>
     {% else %}
-        <a href="{% url 'search-library' item.library.id %}">View Containing Library</a>
-        <br/>
-        <a href="{% url 'view-lender' item.library.owner.id %}">View Owner of Item</a>
-        <br/>
-        <a href="{% url 'create-request' item.id %}">Request Item</a>
-        <br/>
-        <a href="{% url 'rate-item' item.id %}">Rate Item</a>
+        <li><a class="waves-effect waves-light green btn" href="{% url 'search-library' item.library.id %}">View Containing Library</a></li>
+        <li><a class="waves-effect waves-light green btn" href="{% url 'view-lender' item.library.owner.id %}">View Owner of Item</a></li>
+        <li><a class="waves-effect waves-light green btn" href="{% url 'create-request' item.id %}">Request Item</a></li>
+        <li><a class="waves-effect waves-light green btn" href="{% url 'rate-item' item.id %}">Rate Item</a></li>
     {% endif %}
+    </ul>
 {% endblock %}
 
 

@@ -12,8 +12,8 @@ class CreateItem(forms.Form):
     release = forms.DateField(widget=forms.DateInput(attrs={"type": "date"}), help_text="When was the physical item released?")
     producer = forms.CharField(max_length=127)
     condition = forms.CharField(max_length=127,required=False)
-    description = forms.CharField(max_length=127,required=False)
-    notes = forms.CharField(max_length=127,required=False)
+    description = forms.CharField(widget=forms.Textarea, max_length=127,required=False)
+    notes = forms.CharField(widget=forms.Textarea, max_length=127,required=False)
     item_format = forms.ChoiceField(widget=forms.Select, choices=SCLibraryModels.Item.FORMAT_CHOICES)
     age_rating = forms.ChoiceField(widget=forms.Select, choices=SCLibraryModels.Item.AGE_RATING_CHOICES)
 
@@ -22,7 +22,15 @@ class CreateItem(forms.Form):
 
     def save(self, request):
         data = self.cleaned_data
-        return SCLibraryModels.Item.objects.create(library=request.user.lender.library, title=data["title"], release=data["release"], producer=data["producer"], condition=data["condition"], description=data["description"], notes=data["notes"], item_format=data["item_format"], age_rating=data["age_rating"])
+        return SCLibraryModels.Item.objects.create(library=request.user.lender.library, 
+            title=data["title"],
+            release=data["release"],
+            producer=data["producer"],
+            condition=data["condition"],
+            description=data["description"],
+            notes=data["notes"],
+            item_format=data["item_format"],
+            age_rating=data["age_rating"])
 
 class EditItem(LoginRequiredMixin, UpdateView):
     model = SCLibraryModels.Item

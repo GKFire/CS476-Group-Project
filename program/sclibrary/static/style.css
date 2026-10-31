@@ -5,7 +5,13 @@
     text-align: center;
 }
 
-.bottom-nav .nav-wrapper {
+
+div.nav-wrapper {
+    height: 50px;
+    padding: 0px 0px 0px 20px;
+} 
+
+div.bottom-nav {
     height: 50px;
 }
 
@@ -25,11 +31,27 @@ div.container {
 
 .container > div {
     width: 100%;
+    margin: 0px;
+    padding: 10px 5px;
 }
 
-.long {
-    min-height: calc(100vh - 80px) !important;
+div.long {
+    height: calc(90vh - 80px) !important;
     box-sizing: border-box;
+    overflow-y: scroll;
+}
+
+div.panel {
+    padding: 20px 10px 20px 15px;
+}
+
+ul.options-list li {
+    padding: 10px 0px;
+    width: 100%;
+
+    > a {
+        width: 100%;
+    }
 }
 
 .main-navbar {
