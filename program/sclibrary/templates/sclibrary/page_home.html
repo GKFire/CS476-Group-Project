@@ -1,35 +1,23 @@
 {% extends "sclibrary/template_page_overview.html" %}
 
 {% block navigation %}
+<ul class="options-list">
 {% if user_type == "LENDER" %}
-<ul>
-  <li><a href="{% url 'create-item' %}">Create Item</a></li>
-  <li><a href="{% url 'myprofile-requests' %}">View Requests</a></li>
-  <ul>
-    <li><a href="{% url 'myprofile-requests' %}">Ongoing Loans</a></li>
-    <li><a href="{% url 'myprofile-requests' %}">Overdue Loans</a></li>
-  </ul>
-</ul>
-{% elif user_type == "BORROWER" %}
-<ul>
-  <li><a href="{% url 'myprofile-requests' %}">View Requests</a></li>
-  <ul>
-    <li><a href="{% url 'myprofile-requests' %}">Ongoing Loans</a></li>
-    <li><a href="{% url 'myprofile-requests' %}">Overdue Loans</a></li>
-  </ul>
-</ul>
-{% else %}
-<ul>
-  <li><a href="{% url 'admin' %}">Admin Panel</a></li>
-</ul>
+  <li><a class="waves-effect waves-light green btn" href="{% url 'create-item' %}">Create Item</a></li>
+{% elif user_type == "ADMIN" %}
+  <li><a class="waves-effect waves-light green btn" href="{% url 'admin' %}">Admin Panel</a></li>
 {% endif %}
+  <li><a class="waves-effect waves-light green btn" href="{% url 'myprofile-requests' %}">View Requests</a></li>
+  <li><a class="waves-effect waves-light green btn" href="{% url 'myprofile-requests' %}?status=AC">Ongoing Loans</a></li>
+  <li><a class="waves-effect waves-light green btn" href="{% url 'myprofile-requests' %}?static=OD">Overdue Loans</a></li>
+</ul>
 {% endblock %}
 
 
 {% block content %}
 {% for library in libraries %}
 <div>
-  <ul class="collection">
+  <ul class="collection panel">
   <li class="collection-header"><a href="{% url 'search-library' library_pk=library.id %}"><h4>{{ library.name }}</h4></a></li>
     {% for item in library.item_set.all %}
     <li class="collection-item avatar"><a href="{% url 'view-item' item_pk=item.id %}"><i class="material-icons circle teal">movie</i><span class="title">{{ item.title }}</span><p>{{ item.release }} | {{ item.age_rating }}<br/>{{ item.item_type }} -- {{ item.get_item_format_display }}</p></a></li>

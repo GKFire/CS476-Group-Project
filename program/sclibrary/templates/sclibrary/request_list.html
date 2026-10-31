@@ -9,7 +9,7 @@
   <tr><th>Item</th>{% if is_lender %}<th>Borrower</th>{% endif %}<th>Start</th><th>Return</th><th>Status</th><th></th></tr>
   {% for r in requests %}
   <tr>
-    <td>{{ r.item.title }}</td>
+    <td><a href="{% url 'view-item' r.item.id %}">{{ r.item.title }}</a></td>
     {% if is_lender %}<td>{{ r.borrower.username|default:"(deleted user)" }}</td>{% endif %}
     <td>{{ r.start_date }}</td><td>{{ r.return_date }}</td>
     <td>{{ r.get_status_display }}{% if r.pk in overdue_ids %} <strong>(OVERDUE)</strong>{% endif %}</td>

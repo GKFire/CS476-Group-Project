@@ -4,8 +4,8 @@
 <html>
   <head>
     <title>SCLibrary</title>
-    <link rel="stylesheet" href="{% static 'style.css' %}"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link rel="stylesheet" href="{% static 'style.css' %}"/>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
   </head>
@@ -14,7 +14,7 @@
     <div class="container">
             <nav>
                 <div class="nav-wrapper">
-                    <a href="{% url 'home' %}" class="left brand-logo">SCLibrary</a>
+                    <a href="{% url 'home' %}" class="brand-logo">SCLibrary</a>
                     <ul id="nav-mobile" class="right hide-on-med-and-down">
                         {% if request.user.is_authenticated %}
                         <li><a href="{% url 'myprofile' %}">My Profile</a></li>
@@ -28,14 +28,14 @@
                 </div>
             </nav>
             <div class="row">
-                <div class="col s3 m3 l2 xl2 card-panel teal lighten-2 long">
-                    {% block navigation %}{% endblock %}
+                <div class="col s2 m2 l1 xl2 teal long lighten-1">
+                    <div class="panel">{% block navigation %}{% endblock %}</div>
                 </div>
-                <div class="col s7 m7 l8 xl9 card-panel teal lighten-2 long mainBorder">
-                    {% block content %}{% endblock %}
+                <div class="col s7 m7 l8 xl8 teal lighten-4 long">
+                    <div class="panel">{% block content %}{% endblock %}</div>
                 </div>
-                <div class="col s2 m2 l2 xl1 long padded">
-                    {% block options %}{% endblock %}
+                <div class="col s3 m3 l3 xl2 teal long lighten-1">
+                    <div class="panel">{% block options %}{% endblock %}</div>
                 </div>
             </div>
             <nav class="bottom-nav">

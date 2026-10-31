@@ -1,0 +1,37 @@
+{% extends "sclibrary/template_page_overview.html" %}
+
+{% block navigation %}
+<ul class="options-list">
+{% if request.user.user_type == "LENDER" %}
+  <li><a class="waves-effect waves-light green btn" href="{% url 'create-item' %}">Create Item</a></li>
+  <li><a class="waves-effect waves-light green btn" href="{% url 'create-item' %}">Edit Library</a></li>
+{% elif request.user.user_type == "ADMIN" %}
+  <li><a class="waves-effect waves-light green btn" href="{% url 'admin' %}">Admin Panel</a></li>
+{% endif %}
+  <li><a class="waves-effect waves-light green btn" href="{% url 'myprofile-requests' %}">View Requests</a></li>
+  <li><a class="waves-effect waves-light green btn" href="{% url 'myprofile-requests' %}?status=AC">Ongoing Loans</a></li>
+  <li><a class="waves-effect waves-light green btn" href="{% url 'myprofile-requests' %}?static=OD">Overdue Loans</a></li>
+</ul>
+{% endblock %}
+
+
+{% block content %}
+<div>
+  <ul class="collection panel">
+  <li class="collection-header"><h4>{{ library.name }}</h4></li>
+    {% for item in library.item_set.all %}
+    <li class="collection-item avatar"><a href="{% url 'view-item' item_pk=item.id %}"><i class="material-icons circle teal">movie</i><span class="title">{{ item.title }}</span><p>{{ item.release }} | {{ item.age_rating }}<br/>{{ item.item_type }} -- {{ item.get_item_format_display }}</p></a></li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}
+
+
+{% block options %}
+{% if request.user.is_authenticated %}
+  <p>Currently Logged in as: {{request.user.username}} -- {{request.user.user_type}}</p>
+{% else %}
+  <p>You are currently not logged in</p>
+{% endif %}
+{% endblock %}
+

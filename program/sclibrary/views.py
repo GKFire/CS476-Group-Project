@@ -30,7 +30,7 @@ def home(request: HttpRequest):
 @login_required
 def myprofile(request: HttpRequest):
     if (request.user.user_type == USER_TYPES.LENDER):
-        return HttpResponse(request.user.lender.library)
+        return render(request, "sclibrary/page_myprofile.html", {"library": request.user.lender.library })
     elif (request.user.user_type == USER_TYPES.BORROWER):
         return HttpResponse("Placeholder")
 
