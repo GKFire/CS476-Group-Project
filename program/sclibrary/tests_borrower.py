@@ -105,7 +105,7 @@ class SendBorrowRequestTests(TestCase):
     def test_past_and_reversed_dates_rejected(self):
         self.client.login(username="bob", password="pw12345!")
         self.assertContains(self.send(start=date.today() - timedelta(days=1)), "cannot be in the past")
-        self.assertContains(self.send(ret=self.start), "must be after the start date")
+        self.assertContains(self.send(ret=self.start), "The latest date must be after the earliest date.")
         self.assertFalse(M.BorrowRequest.objects.exists())
 
 

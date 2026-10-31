@@ -19,6 +19,16 @@ class EditItem(LoginRequiredMixin, UpdateView):
     model = SCLibraryModels.Item
     fields = ["condition", "description", "notes", "is_visible"]
 
+    def get_queryset(self):
+        return SCLibraryModels.Item.objects.filter(
+            library__owner_id=self.request.user.pk
+        )
+
 class DeleteItem(LoginRequiredMixin, DeleteView):
     model = SCLibraryModels.Item
     success_url = reverse_lazy("myprofile")
+
+    def get_queryset(self):
+        return SCLibraryModels.Item.objects.filter(
+            library__owner_id=self.request.user.pk
+        )
