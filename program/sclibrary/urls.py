@@ -1,9 +1,7 @@
 from django.urls import path
 from django.contrib.auth.views import LoginView, LogoutView
 from django.conf import settings
-from . import views
-from . import borrower_views
-from . import request_views
+from . import views, borrower_views, lender_views, request_views
 
 urlpatterns = [
     path("", views.index, name="index"), # only seen by new users
@@ -19,7 +17,7 @@ urlpatterns = [
     path("search/library/<int:library_pk>", views.searchLibrary, name="search-library"), # borrower only
 
     path("item/<int:item_pk>/", views.viewItem, name="view-item"),
-    path("item/create/", views.createItem, name="create-item"), # lender only
+    path("item/create/", lender_views.create_item, name="create-item"), # lender only
     path("item/<int:item_pk>/edit/", views.editItem, name="edit-item"), # lender only
     path("item/<int:item_pk>/delete/", views.deleteItem, name="delete-item"), # lender only
     path("item/<int:item_pk>/rate/", views.rateItem, name="rate-item"), # borrower can append, lender can only view

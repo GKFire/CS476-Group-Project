@@ -1,0 +1,58 @@
+{% extends "sclibrary/template_page_overview.html" %}
+
+
+
+{% block navigation %}
+    {% if request.user.user_type == "LENDER" %}
+        <a href="{% url 'item-view-requests' item.id %}">View Requests for this Item</a>
+        <a href="{% url 'edit-item' item.id %}">Edit Item</a>
+        <a href="{% url 'delete-item' item.id %}">Delete Item</a>
+    {% else %}
+        <a href="{% url 'search-library' item.library.id %}">View Containing Library</a>
+        <br/>
+        <a href="{% url 'view-lender' item.library.owner.id %}">View Owner of Item</a>
+        <br/>
+        <a href="{% url 'create-request' item.id %}">Request Item</a>
+        <br/>
+        <a href="{% url 'rate-item' item.id %}">Rate Item</a>
+    {% endif %}
+{% endblock %}
+
+
+{% block content %}
+<div>
+    <h3>{{ item.title }}</h3>
+    <p>{{ item.get_item_format_display }} -- {{ item.get_age_rating_display }}</p>
+    <p>Release: {{ item.release }}</p>
+    <p>Producer: {{ item.producer }}</p>
+    <p>Description: {{ item.description }}</p>
+    <br/>
+    <p>Condition: {{ item.condition }}</p>
+    <p>Notes: {{ item.notes }}</p>
+    {% if request.user.user_type == "LENDER" %}
+        <p>Created: {{ item.addedDate }}</p>
+        <p>Last Modified: {{ item.lastModified }}</p>
+        <p>{% if item.is_visible %} Currently visible to Borrowers {% else %} Not visible to Borrowers {% endif %}</p>
+        {% if borrow_request == None %}
+            <p>Currently not being borrowed by anyone</p>
+        {% else %}
+            <a href="{% url 'view-request' borrow_request.id %}">Currently being borrowed by {{ borrow_request.borrower.username }}</a>
+        {% endif %}
+    {% else %}
+        {% if borrow_request == None %}
+            <p>This item is currently available for <a href="{% url 'create-request' item.id %}">request</a>.</p>
+        {% elif borrow_request.borrower == request.user.borrower %}
+            <p>This item is currently being borrowed by you.</p>
+            <p>You can view the status of your <a href="{% url 'view-request' borrow_request.id %}">request here</a></p>
+        {% else%}
+            <p>This item is currently being borrowed by someone else.</p>
+            <p>You will be able to request for this item after {{ borrow_request.return_date }}</p>
+        {% endif %}
+    {% endif %}
+</div>
+{% endblock %}
+
+
+{% block options %}
+
+{% endblock %}
