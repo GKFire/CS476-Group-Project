@@ -154,8 +154,12 @@ class Item(models.Model):
                 ("WU", "Nintendo Wii U"),
                 ("3DS", "Nintendo 3DS"),
                 ("Wii", "Nintendo Wii"),
+                ("Wii U", "Nintendo Wii U"),
+                ("N3DS", "Nintendo 3DS"),
                 ("NDS", "Nintendo DS"),
                 ("GCN", "Nintendo GameCube"),
+                ("N64", "Nintendo 64"),
+                ("SNES", "Nintendo SNES"),
                 ("PS5", "Playstation 5"),
                 ("PS4", "Playstation 4"),
                 ("PS3", "Playstation 3"),
@@ -178,7 +182,8 @@ class Item(models.Model):
             ("RD-70", "70mm Record"),
             ("RD-45", "45mm Record"),
             ("CT", "Cassette Tape"),
-            ("8T", "8-Track"),),
+            ("8T", "8-Track"),
+            ("LP", "Vinyl Record"),),
         ),
         ("Book", "Physical Book"),
         ("Other", "Other"),
@@ -207,6 +212,7 @@ class Item(models.Model):
     addedDate = models.DateTimeField(auto_now_add=True)
     lastModified = models.DateTimeField(auto_now=True)
     is_visible = models.BooleanField(default=True)
+    is_borrowed = models.BooleanField(default=False)
 
     def __str__(self):
         return self.library.name + " - " + self.title
@@ -309,22 +315,10 @@ class Subject(ABC):
 
 
 class ConcreteSubject(Subject):
-    """
-    The Subject owns some important state and notifies observers when the state
-    changes.
-    """
 
-    _state: int = None
-    """
-    For the sake of simplicity, the Subject's state, essential to all
-    subscribers, is stored in this variable.
-    """
-
-    _observers: List[Observer] = []
-    """
-    List of subscribers. In real life, the list of subscribers can be stored
-    more comprehensively (categorized by event type, etc.).
-    """
+    def __init__(self, item) -> None:
+        self.item = item
+        self._observers: List[Observer] = []
 
     def attach(self, observer: Observer) -> None:
         print("Subject: Attached an observer.")
@@ -346,19 +340,7 @@ class ConcreteSubject(Subject):
         for observer in self._observers:
             observer.update(self)
 
-    def some_business_logic(self) -> None:
-        """
-        Usually, the subscription logic is only a fraction of what a Subject can
-        really do. Subjects commonly hold some important business logic, that
-        triggers a notification method whenever something important is about to
-        happen (or after it).
-        """
-
-        print("\nSubject: I'm doing something important.")
-        self._state = randrange(0, 10)
-
-        print(f"Subject: My state has just changed to: {self._state}")
-        self.notify()
+    
 
 
 class Observer(ABC):
@@ -380,14 +362,15 @@ attached to.
 """
 
 
-class ConcreteObserverA(Observer):
+class ConcreteObserver(Observer):
+    def __init__(self, borrower) -> None:
+        self.borrower = borrower
+
     def update(self, subject: Subject) -> None:
-        if subject._state < 3:
-            print("ConcreteObserverA: Reacted to the event")
+        if subject.item.is_borrowed:
+            print(f"Observer: {self.borrower.username} has been notified that {subject.item.title} is now borrowed.")
+        else:
+            print(f"Observer: {self.borrower.username} has been notified that {subject.item.title} is now available.")
 
 
-class ConcreteObserverB(Observer):
-    def update(self, subject: Subject) -> None:
-        if subject._state == 0 or subject._state >= 2:
-            print("ConcreteObserverB: Reacted to the event")
 
