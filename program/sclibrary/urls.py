@@ -32,6 +32,7 @@ urlpatterns = [
     
     path("wishlist/", views.viewWishlist, name="view-wishlist"), # borrower only
     path("wishlist/add/", wishlist_views.add_to_wishlist, name="add-to-wishlist"),
+    path("wishlist/remove/", wishlist_views.remove_from_wishlist, name="remove-from-wishlist"),
     path("notifications/", request_views.notifications_list, name="view-notifications"),
     path("notifications/read/", request_views.notifications_mark_read, name="notifications-mark-read"),
     path("item/<int:item_pk>/visibility/", request_views.toggle_item_visibility, name="toggle-item-visibility"),

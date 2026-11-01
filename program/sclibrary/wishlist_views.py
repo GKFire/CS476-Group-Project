@@ -23,5 +23,22 @@ def add_to_wishlist(request):
         borrower_id=request.user.pk,
         item=item
     )
+    return redirect("view-wishlist")
 
+@login_required
+@require_POST
+def remove_from_wishlist(request):
+    if request.user.user_type != UserAccount.Types.BORROWER:
+       return HttpResponseForbidden("Only borrowers can use the Wishlist")
+
+    item_id = request.POST.get("item_id")
+
+    if not item_id or not item_id.isdigit():
+        return HttpResponseBadRequest("Invalid item ID")
+
+    BorrowerWishList.objects.filter(
+        borrower_id=request.user.pk,
+        item_id=int(item_id)
+).delete()
+    
     return redirect("view-wishlist")

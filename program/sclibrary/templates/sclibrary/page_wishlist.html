@@ -19,6 +19,13 @@
 
     {% for entry in saved_items %}
         <p>{{ entry.item.title }}</p>
+
+        <form method="post" action="{% url 'remove-from-wishlist' %}">
+            {% csrf_token %}
+            <input type="hidden" name="item_id" value="{{ entry.item.pk }}">
+            <button type="submit">Remove</button>
+        </form>
+
     {% empty %}
         <p>Your wishlist is empty.</p>
     {% endfor %}
