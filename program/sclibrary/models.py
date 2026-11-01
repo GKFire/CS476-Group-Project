@@ -1,7 +1,7 @@
+from __future__ import annotations
 from django.db import models
 from django.urls import reverse
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
-from __future__ import annotations
 from random import randrange
 from abc import ABC, abstractmethod
 from typing import List
