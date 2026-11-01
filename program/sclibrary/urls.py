@@ -4,6 +4,7 @@ from django.conf import settings
 from . import views
 from . import borrower_views
 from . import request_views
+from . import wishlist_views
 
 urlpatterns = [
     path("", views.index, name="index"), # only seen by new users
@@ -30,6 +31,7 @@ urlpatterns = [
     path("request/<int:request_pk>/validate/", request_views.request_decision, name="validate-request"), # lender only
     
     path("wishlist/", views.viewWishlist, name="view-wishlist"), # borrower only
+    path("wishlist/add/", wishlist_views.add_to_wishlist, name="add-to-wishlist"),
     path("notifications/", request_views.notifications_list, name="view-notifications"),
     path("notifications/read/", request_views.notifications_mark_read, name="notifications-mark-read"),
     path("item/<int:item_pk>/visibility/", request_views.toggle_item_visibility, name="toggle-item-visibility"),

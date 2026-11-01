@@ -1,0 +1,26 @@
+{% extends "sclibrary/template_page_overview.html" %}
+
+{% block content %}
+    <h4>My Wishlist</h4>
+
+    <form method="post" action="{% url 'add-to-wishlist' %}">
+        {% csrf_token %}
+
+        <select name="item_id" class="browser-default">
+            {% for item in available_items %}
+                <option value="{{ item.pk }}">{{ item.title }}</option>
+            {% endfor %}
+        </select>
+
+        <button type="submit">Add to Wishlist</button>
+    </form>
+
+    <h5>Saved Items</h5>
+
+    {% for entry in saved_items %}
+        <p>{{ entry.item.title }}</p>
+    {% empty %}
+        <p>Your wishlist is empty.</p>
+    {% endfor %}
+
+{% endblock %}

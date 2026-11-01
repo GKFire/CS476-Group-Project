@@ -106,7 +106,20 @@ def viewBorrow(request: HttpRequest, item_pk: int):
 def viewWishlist(request: HttpRequest):
     if (request.user.user_type != USER_TYPES.BORROWER):
         return error_lender_attempted_to_access_borrower_only_page(request)
-    return HttpResponse(request.user.borrowerwishlist_set.all().values().to_string())
+    saved_items = SCLibraryModels.BorrowerWishList.objects.filter(
+        borrower_id=request.user.pk
+    )
+    available_items = SCLibraryModels.Item.objects.filter(
+        is_visible=True
+    ).order_by("title")
+    return render(
+        request,
+        "sclibrary/page_wishlist.html",
+        {
+            "saved_items": saved_items,
+            "available_items": available_items
+        }
+    )
 
 @login_required
 def viewNotifs(request: HttpRequest):
