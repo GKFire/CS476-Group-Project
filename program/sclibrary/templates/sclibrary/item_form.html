@@ -1,5 +1,14 @@
 {% extends "sclibrary/template_page_overview.html" %}
 
+{% block navigation %}
+<ul class="options-list">
+    {% for item_type in item_types %}
+        <li><a class="waves-effect waves-light green btn" href="{% url 'create-item' %}?type={{ item_type }}">Add {{ item_type }}</a></li>
+    {% endfor %}
+</ul>
+{% endblock %}
+
+
 {% block content %}
 <form method="post" class="sc-form">
     {% csrf_token %}

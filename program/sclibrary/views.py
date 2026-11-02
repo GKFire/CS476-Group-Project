@@ -43,7 +43,9 @@ def myprofileRequests(request: HttpRequest):
 
 @login_required
 def search(request: HttpRequest):
-    return get_list_or_404(SCLibraryModels.Item)
+    libraries = SCLibraryModels.Library.objects.all()
+
+    return render(request, "sclibrary/page_search.html", {"libraries": libraries, "format_list": SCLibraryModels.Item.get_item_types(), "age_rating_list": SCLibraryModels.Item.get_age_ratings()})
 
 @login_required
 def searchLibrary(request: HttpRequest, library_pk: int):
@@ -85,7 +87,7 @@ def viewBorrow(request: HttpRequest, item_pk: int):
     item = SCLibraryModels.Item.objects.filter(id=item_pk).first()
     if (item == None):
         return HttpResponse("Item does not exist")
-    item_requests = item.borrowrequest_set.all().values().to_string()
+    item_requests = item.borrowrequest_set.all().values()
     return HttpResponse(item_requests)
 
 @login_required
@@ -106,6 +108,7 @@ def viewWishlist(request: HttpRequest):
             "available_items": available_items
         }
     )
+    return HttpResponse(request.user.borrowerwishlist_set.all().values())
 
 @login_required
 def viewNotifs(request: HttpRequest):
