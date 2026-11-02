@@ -19,6 +19,11 @@
                         {% if request.user.is_authenticated %}
                         <li><a href="{% url 'myprofile' %}">My Profile</a></li>
                         <li><a href="{% url 'myprofile-requests'%}">Requests</a></li>
+                        
+                        {% if request.user.user_type == "BORROWER" %}
+                        <li><a href="{% url 'view-wishlist' %}">Wishlist</a></li>
+                        {% endif %}
+
                         <li><a href="{% url 'view-notifications'%}">Notifications</a></li>
                         <li><a href="{% url 'logout' %}">Sign out</a></li>
                         {% else %}
