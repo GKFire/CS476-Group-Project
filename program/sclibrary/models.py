@@ -214,6 +214,13 @@ class Item(models.Model):
     is_visible = models.BooleanField(default=True)
     is_borrowed = models.BooleanField(default=False)
 
+    def item_type(self):
+        for format in Item.FORMAT_CHOICES:
+            for entry in format[1]:
+                if self.item_format == entry[0]:
+                    return format[0]
+        return None
+
     def __str__(self):
         return self.library.name + " - " + self.title
 

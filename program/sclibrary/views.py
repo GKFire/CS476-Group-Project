@@ -61,22 +61,8 @@ def viewItem(request: HttpRequest, item_pk: int):
     if item.is_visible == False and request.user.user_type == USER_TYPES.BORROWER:
         return HttpResponseForbidden("This item has been hidden by it's owner")
 
-    return JsonResponse({
-        "title": item.title,
-        "library": item.library.name,
-        "release": item.release,
-        "producer": item.producer,
-        "condition": item.condition,
-        "notes": item.notes,
-        "format": item.item_format,
-        "rating": item.age_rating
-    })
-
-@login_required
-def createItem(request: HttpRequest):
-    if (request.user.user_type != USER_TYPES.LENDER):
-            return error_borrower_attempted_to_access_lender_only_page(request)
-    return ItemForm.CreateItem.as_view()(request)
+    borrow_request = SCLibraryModels.BorrowRequest.objects.filter(item=item_pk,status="AC").first()
+    return render(request, "sclibrary/item_view.html", {"item": item, "borrow_request": borrow_request})
 
 @login_required
 def editItem(request: HttpRequest, item_pk: int):

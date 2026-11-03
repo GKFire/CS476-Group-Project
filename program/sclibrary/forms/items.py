@@ -1,19 +1,28 @@
+from django import forms
+
+
 from django.http import JsonResponse
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 import sclibrary.models as SCLibraryModels
 
-class CreateItem(LoginRequiredMixin, CreateView):
-    model = SCLibraryModels.Item
-    fields = ["title", "release", "producer", "condition", "description", "notes", "item_format", "age_rating"]
-    def form_valid(self, form):
-        if self.request.user.user_type != SCLibraryModels.UserAccount.Types.LENDER:
-            return JsonResponse(form.errors, status=401)
-        library = self.request.user.lender.library
-        form.instance.library = library
-        form.instance.is_visible = library.default_item_visibility
-        return super().form_valid(form);
+class CreateItem(forms.Form):
+    title = forms.CharField(max_length=127)
+    release = forms.DateField(widget=forms.DateInput(attrs={"type": "date"}), help_text="When was the physical item released?")
+    producer = forms.CharField(max_length=127)
+    condition = forms.CharField(max_length=127,required=False)
+    description = forms.CharField(max_length=127,required=False)
+    notes = forms.CharField(max_length=127,required=False)
+    item_format = forms.ChoiceField(widget=forms.Select, choices=SCLibraryModels.Item.FORMAT_CHOICES)
+    age_rating = forms.ChoiceField(widget=forms.Select, choices=SCLibraryModels.Item.AGE_RATING_CHOICES)
+
+    def clean(self):
+        return super().clean()
+
+    def save(self, request):
+        data = self.cleaned_data
+        return SCLibraryModels.Item.objects.create(library=request.user.lender.library, title=data["title"], release=data["release"], producer=data["producer"], condition=data["condition"], description=data["description"], notes=data["notes"], item_format=data["item_format"], age_rating=data["age_rating"])
 
 class EditItem(LoginRequiredMixin, UpdateView):
     model = SCLibraryModels.Item

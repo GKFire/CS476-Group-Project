@@ -14,8 +14,8 @@
     <div class="container">
             <nav>
                 <div class="nav-wrapper">
-                    <a href="{% url 'home' %}" class="brand-logo right">SCLibrary</a>
-                    <ul id="nav-mobile" class="left hide-on-med-and-down">
+                    <a href="{% url 'home' %}" class="left brand-logo">SCLibrary</a>
+                    <ul id="nav-mobile" class="right hide-on-med-and-down">
                         {% if request.user.is_authenticated %}
                         <li><a href="{% url 'myprofile' %}">My Profile</a></li>
                         <li><a href="{% url 'myprofile-requests'%}">Requests</a></li>
