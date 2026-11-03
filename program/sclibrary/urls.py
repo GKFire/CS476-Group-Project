@@ -13,16 +13,15 @@ urlpatterns = [
     path("myprofile/", views.myprofile, name="myprofile"), # borrower sees list of currently borrowed items, lender sees list of items in their library
     path("myprofile/requests/", request_views.request_list, name="myprofile-requests"), # borrower sees list of requests assoicated with them, lender sees list of requests on items they own
 
-    path("search/", views.search, name="search"), # borrower only
-    path("search/library/<int:library_pk>", views.searchLibrary, name="search-library"), # borrower only
+    path("search/", borrower_views.search, name="search"), # borrower only
 
     path("item/<int:item_pk>/", views.viewItem, name="view-item"),
     path("item/create/", lender_views.create_item, name="create-item"), # lender only
-    path("item/<int:item_pk>/edit/", views.editItem, name="edit-item"), # lender only
-    path("item/<int:item_pk>/delete/", views.deleteItem, name="delete-item"), # lender only
+    path("item/<int:item_pk>/edit/", lender_views.edit_item, name="edit-item"), # lender only
+    path("item/<int:item_pk>/delete/", lender_views.delete_item, name="delete-item"), # lender only
     path("item/<int:item_pk>/rate/", views.rateItem, name="rate-item"), # borrower can append, lender can only view
 
-    path("item/<int:item_pk>/requests/", views.viewBorrow, name="item-view-requests"),
+    path("item/<int:item_pk>/requests/", views.viewBorrow, name="item-view-requests"), # lender only
     path("item/<int:item_pk>/requests/create/", borrower_views.send_borrow_request, name="create-request"), # borrower only
     path("request/<int:request_pk>/", request_views.request_detail, name="view-request"), # both borrower and lender can update (submit revision)
     path("request/<int:request_pk>/validate/", request_views.request_decision, name="validate-request"), # lender only

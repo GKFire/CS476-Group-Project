@@ -2,11 +2,12 @@
 
 {% block navigation %}
 <ul class="options-list">
-{% if user_type == "LENDER" %}
+{% if request.user.user_type == "LENDER" %}
   <li><a class="waves-effect waves-light green btn" href="{% url 'create-item' %}">Create Item</a></li>
-{% elif user_type == "ADMIN" %}
+{% elif request.user.user_type == "ADMIN" %}
   <li><a class="waves-effect waves-light green btn" href="{% url 'admin' %}">Admin Panel</a></li>
 {% endif %}
+  <li><a class="waves-effect waves-light green btn" href="{% url 'search' %}">Search Catalogue</a></li>
   <li><a class="waves-effect waves-light green btn" href="{% url 'myprofile-requests' %}">View Requests</a></li>
   <li><a class="waves-effect waves-light green btn" href="{% url 'myprofile-requests' %}?status=AC">Ongoing Loans</a></li>
   <li><a class="waves-effect waves-light green btn" href="{% url 'myprofile-requests' %}?static=OD">Overdue Loans</a></li>
@@ -15,14 +16,49 @@
 
 
 {% block content %}
+
+{% if request.user.user_type == "BORROWER" %}
+<div>
+  <ul class="collection panel">
+    <li class="collection-header"><h4>Currently borrowing</h4></li>
+    {% for borrow_request in borrowing_list %}
+    <a href="{% url 'view-item' item_pk=borrow_request.item.id %}">
+      <li class="collection-item">
+        <span class="title">{{ borrow_request.item.title }}</span>
+        <p>
+        {% if borrow_request.item.item_type == "VIDEOGAME" %}
+          Video Game -- {{ item.videogame.get_item_format_display }}
+        {% elif borrow_request.item.item_type == "MOVIE" %}
+          Movie -- {{ borrow_request.item.movie.get_item_format_display }}
+        {% elif borrow_request.item.item_type == "MUSIC" %}
+          Music -- {{ borrow_request.item.music.get_item_format_display }}
+        {% elif borrow_request.item.item_type == "BOOK" %}
+          Book -- {{ borrow_request.item.book.get_item_format_display }}
+        {% elif borrow_request.item.item_type == "OTHER" %}
+          Other Medium
+        {% endif %}
+        <br/>{{ borrow_request.start_date }} -> {{ borrow_request.return_date }}
+        </p>
+      </li>
+    </a>
+    {% endfor %}
+  </ul>
+</div>
+
+
+{% elif request.user.user_type == "LENDER" %}
+
+
+
+{% else %} <!-- ADMIN view -->
+
 {% for library in libraries %}
 <div>
   <ul class="collection panel">
-  <li class="collection-header"><a href="{% url 'search-library' library_pk=library.id %}"><h4>{{ library.name }}</h4></a></li>
+  <li class="collection-header"><a href="{% url 'search' %}?library={{ library.id }}"><h4>{{ library.name }}</h4></a></li>
     {% for item in library.item_set.all %}
-    <li class="collection-item avatar">
+    <li class="collection-item">
       <a href="{% url 'view-item' item_pk=item.id %}">
-        <i class="material-icons circle teal">{{ item.item_type.lower }}</i>
         <span class="title">{{ item.title }}</span>
         {% if item.item_type == "VIDEOGAME" %}
           <p>{{ item.release }} | {{ item.videogame.get_age_rating_display }}<br/>{{ item.item_type }} -- {{ item.videogame.get_item_format_display }}</p>
@@ -41,6 +77,8 @@
   </ul>
 </div>
 {% endfor %}
+
+{% endif %}
 {% endblock %}
 
 

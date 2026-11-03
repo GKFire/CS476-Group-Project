@@ -23,8 +23,21 @@ def createNewItem(type: str):
     else:
         return CreateItem
 
-
-
+def editItem(item_id: int):
+    item = SCLibraryModels.Item.objects.get(id=item_id)
+    if item == None:
+        return None
+    type = item.item_type.lower()
+    if type == "videogame":
+        return EditVideoGameItem
+    elif type == "movie":
+        return EditMovieItem
+    elif type == "music":
+        return EditMusicItem
+    elif type == "book":
+        return EditBookItem
+    else:
+        return EditItem
 
 class CreateItem(forms.Form):
     title = forms.CharField(max_length=127)
@@ -125,6 +138,42 @@ class EditItem(LoginRequiredMixin, UpdateView):
             library__owner_id=self.request.user.pk
         )
 
+class EditVideoGameItem(LoginRequiredMixin, UpdateView):
+    model = SCLibraryModels.VideoGame
+    fields = ["condition", "description", "notes", "item_format", "age_rating", "is_visible"]
+
+    def get_queryset(self):
+        return SCLibraryModels.Item.objects.filter(
+            library__owner_id=self.request.user.pk
+        )
+
+class EditMovieItem(LoginRequiredMixin, UpdateView):
+    model = SCLibraryModels.VideoGame
+    fields = ["condition", "description", "notes", "item_format", "age_rating", "is_visible"]
+
+    def get_queryset(self):
+        return SCLibraryModels.Item.objects.filter(
+            library__owner_id=self.request.user.pk
+        )
+
+class EditMusicItem(LoginRequiredMixin, UpdateView):
+    model = SCLibraryModels.VideoGame
+    fields = ["condition", "description", "notes", "item_format", "age_rating", "is_visible"]
+
+    def get_queryset(self):
+        return SCLibraryModels.Item.objects.filter(
+            library__owner_id=self.request.user.pk
+        )
+
+class EditBookItem(LoginRequiredMixin, UpdateView):
+    model = SCLibraryModels.VideoGame
+    fields = ["condition", "description", "notes", "item_format", "age_rating", "is_visible"]
+
+    def get_queryset(self):
+        return SCLibraryModels.Item.objects.filter(
+            library__owner_id=self.request.user.pk
+        )
+
 class DeleteItem(LoginRequiredMixin, DeleteView):
     model = SCLibraryModels.Item
     success_url = reverse_lazy("myprofile")
@@ -134,22 +183,20 @@ class DeleteItem(LoginRequiredMixin, DeleteView):
             library__owner_id=self.request.user.pk
         )
 
-class SearchView(generic.ListView):
-    model = SCLibraryModels.Item
-    template_name = 'sclibrary/page_search.html'
+def get_searchset(request):
+    library_query = request.GET.get("library")
+    title_query = request.GET.get("title")
+    format_query = request.GET.get("format")
 
-    def get_queryset(self):
-        title_query = self.request.GET.get("title")
-        format_query = self.request.GET.get("format")
-        age_rating_query = self.request.GET.get("age_rating")
+    query_list = SCLibraryModels.Item.objects.all().order_by('title')
 
-        query_list = SCLibraryModels.Item.objects.all()
+    if library_query and int(library_query) != 0:
+        query_list = query_list.filter(library=SCLibraryModels.Library.objects.get(id=library_query))
 
-        if title_query:
-            query_list = query_list.filter(title__icontains=title_query)
+    if format_query and format_query != "Any":
+        query_list = query_list.filter(item_type=format_query)
 
-        if format_query:
-            query_list = query_list.filter()
+    if title_query:
+        query_list = query_list.filter(title__icontains=title_query)
 
-        if age_rating_query:
-            query_list = query_list.filter(age_rating=age_rating_query)
+    return query_list

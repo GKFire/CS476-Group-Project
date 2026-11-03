@@ -14,6 +14,8 @@ from sclibrary import services
 from sclibrary.forms.request import BorrowRequestForm
 from sclibrary.forms.user import RegisterForm
 
+from sclibrary.forms.items import get_searchset
+
 BORROWER = M.UserAccount.Types.BORROWER
 
 
@@ -29,6 +31,12 @@ def register(request: HttpRequest):
     else:
         form = RegisterForm()
     return render(request, "sclibrary/page_register.html", {"form": form})
+
+@login_required
+def search(request: HttpRequest):
+    if request.user.user_type != BORROWER:
+        return HttpResponseForbidden("Only borrowers can access the search.")
+    return render(request, "sclibrary/page_search.html", {"item_list": get_searchset(request), "libraries": M.Library.objects.all(), "format_list": M.Item.Types})
 
 
 @login_required

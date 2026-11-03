@@ -24,8 +24,10 @@ def register(request: HttpRequest):
 
 @login_required
 def home(request: HttpRequest):
+    if request.user.user_type == USER_TYPES.BORROWER:
+        return render(request, "sclibrary/page_home.html", {"borrowing_list": SCLibraryModels.BorrowRequest.objects.filter(status="AC")})
     libraries = SCLibraryModels.Library.objects.all()
-    return render(request, "sclibrary/page_home.html", {"libraries": libraries, "user_type": request.user.user_type})
+    return render(request, "sclibrary/page_home.html", {"libraries": libraries})
 
 @login_required
 def myprofile(request: HttpRequest):
@@ -42,19 +44,6 @@ def myprofileRequests(request: HttpRequest):
         return HttpResponse("Placeholder")
 
 @login_required
-def search(request: HttpRequest):
-    libraries = SCLibraryModels.Library.objects.all()
-
-    return render(request, "sclibrary/page_search.html", {"libraries": libraries, "format_list": SCLibraryModels.Item.get_item_types(), "age_rating_list": SCLibraryModels.Item.get_age_ratings()})
-
-@login_required
-def searchLibrary(request: HttpRequest, library_pk: int):
-    library = SCLibraryModels.Library.objects.filter(id=library_pk).first()
-    if (library == None):
-        return HttpResponse("Library doesn't exist")
-    return HttpResponse(library.item_set.all().values())
-
-@login_required
 def viewItem(request: HttpRequest, item_pk: int):
     item = get_object_or_404(SCLibraryModels.Item, pk=item_pk)
 
@@ -65,18 +54,6 @@ def viewItem(request: HttpRequest, item_pk: int):
 
     borrow_request = SCLibraryModels.BorrowRequest.objects.filter(item=item_pk,status="AC").first()
     return render(request, "sclibrary/item_view.html", {"item": item, "borrow_request": borrow_request})
-
-@login_required
-def editItem(request: HttpRequest, item_pk: int):
-    if (request.user.user_type != USER_TYPES.LENDER):
-            return error_borrower_attempted_to_access_lender_only_page(request)
-    return ItemForm.EditItem.as_view()(request, pk=item_pk)
-
-@login_required
-def deleteItem(request: HttpRequest, item_pk: int):
-    if (request.user.user_type != USER_TYPES.LENDER):
-            return error_borrower_attempted_to_access_lender_only_page(request)
-    return ItemForm.DeleteItem.as_view()(request, pk=item_pk)
 
 @login_required
 def rateItem(request: HttpRequest, item_pk: int):
@@ -134,9 +111,6 @@ def validateRequest(request: HttpRequest):
 @login_required
 def sendBorrowRequest(request: HttpRequest):
     return HttpResponse("Placeholder")
-
-def error_borrower_attempted_to_access_lender_only_page(request: HttpRequest):
-    return HttpResponseForbidden("Your account type does not allow you to access this page")
 
 def error_lender_attempted_to_access_borrower_only_page(request: HttpRequest):
     return HttpResponseForbidden("Your account type does not allow you to access this page")
