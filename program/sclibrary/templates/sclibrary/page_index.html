@@ -1,63 +1,52 @@
-<!DOCTYPE html>
-<html>
-    <head>
+{% extends "sclibrary/template_page_overview.html" %}
 
-        <style>
-
-body {
-    background-color: rgb(197, 188, 204);
-}
-
-
+{% block styling %}
+<style>
 div.menu {
     background-color: white;
     border-radius: 20px;
-    margin: 25vh 35vw;
-    padding: 10px;
-    width: 30vw;
-    height: 40vh;
+    margin: 10% auto;
+    padding: 15px;
+    width: 500px;
+    height: 400px;
     text-align: center;
     overflow-y: scroll;
 }
 
 
 div.login {
-    margin-top: 10vh;
+    margin: 15% 0%;
 
 }
 
 .name {
-    margin-top: 2vh;
+    margin: 10% 0%;
 }
 
 .subtext {
-    margin-top: 0vh;
+    margin: 5% 0%;
 }
 
 
-.button {
-    background-color: coral;
+.login-button {
+    background-color: #ee6e73;
     border-radius: 10px;
     padding: 15px 40px;
     text-decoration: none;
     color: white;
     margin: 20px 30px;
 }
+</style>
+{% endblock %}
 
 
-
-
-
-        </style>
-    </head>
-    <body>
-        <div class="menu">
-            <h1 class="name">SCLibrary</h1>
-            <h4 class="subtext">Sharing is Caring</h4>
-            <div class="login">
-                <a class="button" href="{% url 'login' %}">Login</a>
-                <a class="button" href="{% url 'register' %}">Register</a>
-            </div>
-        </div>
-    </body>
-</html>
+{% block content %}
+<div class="menu">
+    <h1 class="name">SCLibrary</h1>
+    <h4 class="subtext">Sharing is Caring</h4>
+    <div class="login">
+        <a class="login-button" href="{% url 'login' %}">Login</a>
+        <a class="login-button" href="{% url 'register' %}">Register</a>
+    </div>
+</div>
+{% endblock %}

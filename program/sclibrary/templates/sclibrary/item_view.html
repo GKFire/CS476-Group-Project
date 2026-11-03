@@ -5,7 +5,7 @@
 {% block navigation %}
     <ul class="options-list">
     {% if request.user.user_type == "LENDER" %}
-        <li><a class="waves-effect waves-light green btn" href="{% url 'item-view-requests' item.id %}">View Requests for this Item</a></li>
+        <li><a class="waves-effect waves-light green btn" href="{% url 'myprofile-requests' %}">View Requests for this Item</a></li>
         <li><a class="waves-effect waves-light green btn" href="{% url 'edit-item' item.id %}">Edit Item</a></li>
         <li><a class="waves-effect waves-light green btn" href="{% url 'delete-item' item.id %}">Delete Item</a></li>
     {% else %}
@@ -25,11 +25,18 @@
 {% block content %}
 <div>
     <h3>{{ item.title }}</h3>
-    <p>{{ item.get_item_format_display }} -- {{ item.get_age_rating_display }}</p>
+    {% if item.item_type == "VIDEOGAME" %}
+        <p>{{ item.videogame.get_format_display }} -- {{ item.videogame.get_age_display }}</p>
+    {% elif item.item_type == "MOVIE" %}
+        <p>{{ item.movie.get_format_display }} -- {{ item.movie.get_age_display }}</p>
+    {% elif item.item_type == "MUSIC" %}
+        <p>{{ item.music.get_format_display }} -- {{ item.music.get_age_display }}</p>
+    {% elif item.item_type == "BOOK" %}
+        <p>{{ item.book.get_format_display }} -- {{ item.book.get_age_display }}</p>
+    {%endif%}
     <p>Release: {{ item.release }}</p>
     <p>Producer: {{ item.producer }}</p>
     <p>Description: {{ item.description }}</p>
-    <br/>
     <p>Condition: {{ item.condition }}</p>
     <p>Notes: {{ item.notes }}</p>
     {% if request.user.user_type == "LENDER" %}

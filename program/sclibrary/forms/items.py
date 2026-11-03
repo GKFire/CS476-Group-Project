@@ -138,45 +138,50 @@ class EditItem(LoginRequiredMixin, UpdateView):
             library__owner_id=self.request.user.pk
         )
 
+
 class EditVideoGameItem(LoginRequiredMixin, UpdateView):
     model = SCLibraryModels.VideoGame
     fields = ["condition", "description", "notes", "item_format", "age_rating", "is_visible"]
+    template_name="sclibrary/item_form.html"
 
     def get_queryset(self):
-        return SCLibraryModels.Item.objects.filter(
+        return SCLibraryModels.VideoGame.objects.filter(
             library__owner_id=self.request.user.pk
         )
 
 class EditMovieItem(LoginRequiredMixin, UpdateView):
-    model = SCLibraryModels.VideoGame
+    model = SCLibraryModels.Movie
     fields = ["condition", "description", "notes", "item_format", "age_rating", "is_visible"]
+    template_name="sclibrary/item_form.html"
 
     def get_queryset(self):
-        return SCLibraryModels.Item.objects.filter(
+        return SCLibraryModels.Movie.objects.filter(
             library__owner_id=self.request.user.pk
         )
 
 class EditMusicItem(LoginRequiredMixin, UpdateView):
-    model = SCLibraryModels.VideoGame
+    model = SCLibraryModels.Music
     fields = ["condition", "description", "notes", "item_format", "age_rating", "is_visible"]
+    template_name="sclibrary/item_form.html"
 
     def get_queryset(self):
-        return SCLibraryModels.Item.objects.filter(
+        return SCLibraryModels.Music.objects.filter(
             library__owner_id=self.request.user.pk
         )
 
 class EditBookItem(LoginRequiredMixin, UpdateView):
-    model = SCLibraryModels.VideoGame
+    model = SCLibraryModels.Book
     fields = ["condition", "description", "notes", "item_format", "age_rating", "is_visible"]
+    template_name="sclibrary/item_form.html"
 
     def get_queryset(self):
-        return SCLibraryModels.Item.objects.filter(
+        return SCLibraryModels.Book.objects.filter(
             library__owner_id=self.request.user.pk
         )
 
 class DeleteItem(LoginRequiredMixin, DeleteView):
     model = SCLibraryModels.Item
-    success_url = reverse_lazy("myprofile")
+    success_url = reverse_lazy("home")
 
     def get_queryset(self):
         return SCLibraryModels.Item.objects.filter(
@@ -200,3 +205,16 @@ def get_searchset(request):
         query_list = query_list.filter(title__icontains=title_query)
 
     return query_list
+
+
+def getBorrowHistory(borrower_id: int, library_id: int):
+    borrower = SCLibraryModels.Borrower.objects.get(id=borrower_id)
+    library = SCLibraryModels.Library.objects.get(id=library_id)
+    if not borrower or not library: return None
+
+    history = SCLibraryModels.BorrowRequest.objects.filter(borrower=borrower,item__library=library)
+
+    return {
+        "ongoing": (history.filter(status="RQ") | history.filter(status="AC")).order_by("-status"),
+        "previous": (history.filter(status="CD") | history.filter(status="RJ")).order_by("status")
+    }

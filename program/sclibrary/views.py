@@ -1,10 +1,12 @@
-from django.shortcuts import render, get_object_or_404, get_list_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 
 from django.http import HttpRequest, HttpResponse, HttpResponseForbidden
 import sclibrary.models as SCLibraryModels
+from sclibrary.forms.user import RegisterForm
+from django.contrib.auth import login, logout
 
 import sclibrary.forms.items as ItemForm
 import sclibrary.forms.user as UserForm
@@ -20,21 +22,26 @@ def index(request: HttpRequest):
     return render(request, "sclibrary/page_index.html")
 
 def register(request: HttpRequest):
-    return UserForm.CreateUser.as_view()(request)
+    if request.user.is_authenticated:
+        return redirect("home")
+    if request.method == "POST":
+        form = RegisterForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user, backend="django.contrib.auth.backends.ModelBackend")
+            return redirect("home")
+    else:
+        form = RegisterForm()
+    return render(request, "sclibrary/page_register.html", {"form": form})
 
 @login_required
 def home(request: HttpRequest):
     if request.user.user_type == USER_TYPES.BORROWER:
-        return render(request, "sclibrary/page_home.html", {"borrowing_list": SCLibraryModels.BorrowRequest.objects.filter(status="AC")})
+        return render(request, "sclibrary/page_home.html", {"borrowing_list": SCLibraryModels.BorrowRequest.objects.filter(status="AC",borrower=request.user.borrower)})
+    if request.user.user_type == USER_TYPES.LENDER:
+        return render(request, "sclibrary/page_home.html", {"library": SCLibraryModels.Library.objects.get(owner=request.user.lender)})
     libraries = SCLibraryModels.Library.objects.all()
     return render(request, "sclibrary/page_home.html", {"libraries": libraries})
-
-@login_required
-def myprofile(request: HttpRequest):
-    if (request.user.user_type == USER_TYPES.LENDER):
-        return render(request, "sclibrary/page_myprofile.html", {"library": request.user.lender.library })
-    elif (request.user.user_type == USER_TYPES.BORROWER):
-        return borrower_profile_views.borrower_profile(request)
 
 @login_required
 def myprofileRequests(request: HttpRequest):
@@ -85,32 +92,13 @@ def viewWishlist(request: HttpRequest):
             "available_items": available_items
         }
     )
-    return HttpResponse(request.user.borrowerwishlist_set.all().values())
 
-@login_required
-def viewNotifs(request: HttpRequest):
-    if (request.user.user_type == USER_TYPES.BORROWER):
-        return HttpResponse(request.user.borrower.borrowernotification_set.all().values())
-    elif (request.user.user_type == USER_TYPES.LENDER):
-        return HttpResponse(request.user.lender.lendernotification_set.all().values())
-    else:
-        return HttpResponse("Your account does not support notifications")
+def logout_view(request: HttpRequest):
+    """Sign out from a normal link. Django 5+ LogoutView only accepts POST,
+    which made the top bar's "Sign out" link return HTTP 405."""
+    logout(request)
+    return redirect("index")
 
-@login_required
-def viewBorrower(request: HttpRequest, user_pk: int):
-    return get_object_or_404(SCLibraryModels.Borrower, pk=user_pk)
-
-@login_required
-def viewLender(request: HttpRequest, user_pk: int):
-    return get_object_or_404(SCLibraryModels.Lender, pk=user_pk)
-
-@login_required
-def validateRequest(request: HttpRequest):
-    return HttpResponse("Placeholder")
-
-@login_required
-def sendBorrowRequest(request: HttpRequest):
-    return HttpResponse("Placeholder")
 
 def error_lender_attempted_to_access_borrower_only_page(request: HttpRequest):
     return HttpResponseForbidden("Your account type does not allow you to access this page")

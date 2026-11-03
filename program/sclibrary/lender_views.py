@@ -1,7 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest, HttpResponseForbidden
 import sclibrary.models as SCLibraryModels
-from sclibrary.forms.items import createNewItem, editItem, DeleteItem
+from sclibrary.forms.items import createNewItem, editItem, DeleteItem, getBorrowHistory
 from django.shortcuts import redirect, render
 
 LENDER = SCLibraryModels.UserAccount.Types.LENDER
@@ -24,15 +24,23 @@ def create_item(request: HttpRequest):
 @login_required
 def edit_item(request: HttpRequest, item_pk: int):
     if (request.user.user_type != LENDER):
-            return error_borrower_attempted_to_access_lender_only_page(request)
-    return editItem(item_pk)(request, pk=item_pk)
+        return error_borrower_attempted_to_access_lender_only_page(request)
+    return editItem(item_pk).as_view()(request, pk=item_pk)
 
 @login_required
 def delete_item(request: HttpRequest, item_pk: int):
     if (request.user.user_type != LENDER):
-            return error_borrower_attempted_to_access_lender_only_page(request)
+        return error_borrower_attempted_to_access_lender_only_page(request)
     return DeleteItem.as_view()(request, pk=item_pk)
 
+@login_required
+def viewBorrower(request: HttpRequest, user_pk: int):
+    if request.user.user_type != LENDER:
+         return error_borrower_attempted_to_access_lender_only_page(request)
+    borrower_history = getBorrowHistory(user_pk, request.user.lender.library.id)
+    if not borrower_history:
+        return render(request, "sclibrary/user_view.html", {"invalid": True})
+    return render(request, "sclibrary/user_view.html", {"borrower": SCLibraryModels.Borrower.objects.get(id=user_pk), "items_lended_to": borrower_history})
 
 def error_borrower_attempted_to_access_lender_only_page(request: HttpRequest):
     return HttpResponseForbidden("Only Lenders are allowed to access this page.")
