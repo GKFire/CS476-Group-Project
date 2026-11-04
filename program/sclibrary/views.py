@@ -9,9 +9,9 @@ import sclibrary.models as SCLibraryModels
 import sclibrary.forms.items as ItemForm
 import sclibrary.forms.user as UserForm
 
+from . import borrower_profile_views
 
 USER_TYPES = SCLibraryModels.UserAccount.Types
-
 
 # Create your views here.
 
@@ -32,7 +32,7 @@ def myprofile(request: HttpRequest):
     if (request.user.user_type == USER_TYPES.LENDER):
         return HttpResponse(request.user.lender.library)
     elif (request.user.user_type == USER_TYPES.BORROWER):
-        return HttpResponse("Placeholder")
+        return borrower_profile_views.borrower_profile(request)
 
 @login_required
 def myprofileRequests(request: HttpRequest):
@@ -106,7 +106,20 @@ def viewBorrow(request: HttpRequest, item_pk: int):
 def viewWishlist(request: HttpRequest):
     if (request.user.user_type != USER_TYPES.BORROWER):
         return error_lender_attempted_to_access_borrower_only_page(request)
-    return HttpResponse(request.user.borrowerwishlist_set.all().values().to_string())
+    saved_items = SCLibraryModels.BorrowerWishList.objects.filter(
+        borrower_id=request.user.pk
+    )
+    available_items = SCLibraryModels.Item.objects.filter(
+        is_visible=True
+    ).order_by("title")
+    return render(
+        request,
+        "sclibrary/page_wishlist.html",
+        {
+            "saved_items": saved_items,
+            "available_items": available_items
+        }
+    )
 
 @login_required
 def viewNotifs(request: HttpRequest):
