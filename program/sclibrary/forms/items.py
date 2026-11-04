@@ -191,15 +191,16 @@ class DeleteItem(LoginRequiredMixin, DeleteView):
 def get_searchset(request):
     library_query = request.GET.get("library")
     title_query = request.GET.get("title")
-    format_query = request.GET.get("format")
+    type_query = request.GET.get("type")
 
     query_list = SCLibraryModels.Item.objects.all().order_by('title')
 
-    if library_query and int(library_query) != 0:
-        query_list = query_list.filter(library=SCLibraryModels.Library.objects.get(id=library_query))
+    if library_query and library_query != '0':
+        if not library_query.isdigit(): return query_list.none()
+        query_list = query_list.filter(library=SCLibraryModels.Library.objects.filter(id=library_query).first())
 
-    if format_query and format_query != "Any":
-        query_list = query_list.filter(item_type=format_query)
+    if type_query and type_query != "Any":
+        query_list = query_list.filter(item_type__iexact=type_query)
 
     if title_query:
         query_list = query_list.filter(title__icontains=title_query)

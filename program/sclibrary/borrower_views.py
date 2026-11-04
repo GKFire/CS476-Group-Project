@@ -20,7 +20,10 @@ BORROWER = M.UserAccount.Types.BORROWER
 def search(request: HttpRequest):
     if request.user.user_type != BORROWER:
         return HttpResponseForbidden("Only borrowers can access the search.")
-    return render(request, "sclibrary/page_search.html", {"item_list": get_searchset(request), "libraries": M.Library.objects.all(), "format_list": M.Item.Types})
+    library = None
+    if request.GET.get("library") != None:
+        library = int(request.GET.get("library"))
+    return render(request, "sclibrary/page_search.html", {"item_list": get_searchset(request), "library": M.Library.objects.filter(id=library).first(), "libraries": M.Library.objects.all(), "type_list": M.Item.Types})
 
 
 @login_required
@@ -52,4 +55,4 @@ def viewLender(request: HttpRequest, user_pk: int):
     if not lender:
         return render(request, "sclibrary/user_view.html", {"invalid": True})
     borrower_history = getBorrowHistory(request.user.id, lender.library.id)
-    return render(request, "sclibrary/user_view.html", {"lender": lender, "items_borrowed_from": borrower_history})
+    return render(request, "sclibrary/user_view.html", {"lender": lender, "borrow_history": borrower_history})

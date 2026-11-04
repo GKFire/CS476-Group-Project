@@ -40,7 +40,7 @@ def viewBorrower(request: HttpRequest, user_pk: int):
     borrower_history = getBorrowHistory(user_pk, request.user.lender.library.id)
     if not borrower_history:
         return render(request, "sclibrary/user_view.html", {"invalid": True})
-    return render(request, "sclibrary/user_view.html", {"borrower": SCLibraryModels.Borrower.objects.get(id=user_pk), "items_lended_to": borrower_history})
+    return render(request, "sclibrary/user_view.html", {"borrower": SCLibraryModels.Borrower.objects.get(id=user_pk), "borrow_history": borrower_history})
 
 def error_borrower_attempted_to_access_lender_only_page(request: HttpRequest):
     return HttpResponseForbidden("Only Lenders are allowed to access this page.")

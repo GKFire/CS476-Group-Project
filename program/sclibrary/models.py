@@ -148,11 +148,11 @@ class Item(models.Model):
     notes = models.TextField(null=True)
 
     class Types(models.TextChoices):
-        VIDEOGAME = "VIDEOGAME","videogame"
-        MOVIE = "MOVIE","movie"
-        MUSIC = "MUSIC","music"
-        BOOK = "BOOK","book"
-        OTHER = "OTHER","other"
+        VIDEOGAME = "VIDEOGAME","Video Game"
+        MOVIE = "MOVIE","Movie"
+        MUSIC = "MUSIC","Music"
+        BOOK = "BOOK","Book"
+        OTHER = "OTHER","Other"
 
     item_type = models.CharField(max_length=15)
     addedDate = models.DateTimeField(auto_now_add=True)
@@ -164,6 +164,12 @@ class Item(models.Model):
 
     def get_absolute_url(self):
         return reverse("view-item", kwargs={"item_pk": self.id})
+
+    def get_item_type_display(self):
+        return Item.Types(self.item_type).label
+
+    def get_item_types_list():
+        return list(map(lambda type : Item.Types(type).label, Item.Types))
 
 
 class VideoGameManager(models.Manager):

@@ -3,6 +3,12 @@
 
 
 {% block navigation %}
+    {% if request.user.user_type != "LENDER" %}
+    <div style="margin: 5px auto; text-align: center;">
+        <h4>{{ item.library.name }}</h4>
+        <p>Owner: {{ item.library.owner.username }} | {{ item.library.owner.email }}</p>
+    </div>
+    {% endif %}
     <ul class="options-list">
     {% if request.user.user_type == "LENDER" %}
         <li><a class="waves-effect waves-light green btn" href="{% url 'myprofile-requests' %}">View Requests for this Item</a></li>
@@ -16,7 +22,6 @@
         {% else%}
             <li><a class="waves-effect waves-light green btn" href="{% url 'create-request' item.id %}">Request Item</a></li>
         {% endif %}
-        <li><a class="waves-effect waves-light green btn" href="{% url 'rate-item' item.id %}">Rate Item</a></li>
     {% endif %}
     </ul>
 {% endblock %}
