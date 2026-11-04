@@ -5,7 +5,6 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from random import randrange
 from abc import ABC, abstractmethod
 from typing import List
-import sclibrary.notifications as N
 
 # Create your models here.
 
@@ -366,12 +365,12 @@ Concrete Observers react to the updates issued by the Subject they had been
 attached to.
 """
 
-
 class ConcreteObserver(Observer):
     def __init__(self, borrower) -> None:
         self.borrower = borrower
 
     def update(self, subject: Subject) -> None:
+        import sclibrary.notifications as N ## import put here to not create a circular dependency
         if subject.item.is_borrowed:
             print(f"Observer: {self.borrower.username} has been notified that {subject.item.title} is now borrowed.")
             N.notify_wishlist_unavailable(subject.item, self.borrower)
