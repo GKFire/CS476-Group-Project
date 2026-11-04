@@ -1,0 +1,46 @@
+{% extends "sclibrary/template_page_overview.html" %}
+
+{% block content %}
+
+<h4>My Borrower Profile</h4>
+
+<h5>Currently Borrowed</h5>
+
+<ul class="collection">
+    {% for loan in active_loans %}
+    <li class="collection-item">
+        <a href="{% url 'view-item' item_pk=loan.item.pk %}">
+            {{ loan.item.title }}
+        </a>
+        <p>Library: {{ loan.item.library.name }}</p>
+        <p>Return date: {{ loan.return_date }}</p>
+    </li>
+    {% empty %}
+    <li class="collection-item">
+        You have no items currently borrowed.
+    </li>
+    {% endfor %}
+</ul>
+
+<h5>Borrowing History</h5>
+
+<ul class="collection">
+    {% for loan in borrowing_history %}
+    <li class="collection-item">
+        {{ loan.item.title }}
+        <p>Library: {{ loan.item.library.name }}</p>
+        <p>Borrowed: {{ loan.start_date }}</p>
+        <p>Return date: {{ loan.return_date }}</p>
+    </li>
+    {% empty %}
+    <li class="collection-item">
+        No borrowing history yet.
+    </li>
+    {% endfor %}
+</ul>
+
+<a href="{% url 'myprofile-requests' %}">
+    View All Borrow Requests
+</a>
+
+{% endblock %}
