@@ -9,9 +9,9 @@ import sclibrary.models as SCLibraryModels
 import sclibrary.forms.items as ItemForm
 import sclibrary.forms.user as UserForm
 
+from . import borrower_profile_views
 
 USER_TYPES = SCLibraryModels.UserAccount.Types
-
 
 # Create your views here.
 
@@ -32,7 +32,7 @@ def myprofile(request: HttpRequest):
     if (request.user.user_type == USER_TYPES.LENDER):
         return HttpResponse(request.user.lender.library)
     elif (request.user.user_type == USER_TYPES.BORROWER):
-        return HttpResponse("Placeholder")
+        return borrower_profile_views.borrower_profile(request)
 
 @login_required
 def myprofileRequests(request: HttpRequest):
