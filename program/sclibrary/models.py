@@ -5,6 +5,7 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from random import randrange
 from abc import ABC, abstractmethod
 from typing import List
+import sclibrary.notifications as N
 
 # Create your models here.
 
@@ -316,16 +317,20 @@ class Subject(ABC):
 
 class ConcreteSubject(Subject):
 
+    ## Initilization function
     def __init__(self, item) -> None:
-        self.item = item
-        self._observers: List[Observer] = []
+        self.item = item ## Sets the item for the subject
+        self._observers: List[Observer] = [] ## Sets the list of observers for the subject, and initializes it to an empty list
 
+    ## Attach function 
     def attach(self, observer: Observer) -> None:
         print("Subject: Attached an observer.")
         self._observers.append(observer)
 
+    ## Detach function
     def detach(self, observer: Observer) -> None:
         self._observers.remove(observer)
+        print("Subject: Removed an observer.")
 
     """
     The subscription management methods.
@@ -369,8 +374,11 @@ class ConcreteObserver(Observer):
     def update(self, subject: Subject) -> None:
         if subject.item.is_borrowed:
             print(f"Observer: {self.borrower.username} has been notified that {subject.item.title} is now borrowed.")
+            N.notify_wishlist_unavailable(subject.item, self.borrower)
+
         else:
             print(f"Observer: {self.borrower.username} has been notified that {subject.item.title} is now available.")
+            N.notify_wishlist_available(subject.item, self.borrower)
 
 
 

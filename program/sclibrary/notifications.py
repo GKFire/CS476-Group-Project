@@ -45,3 +45,19 @@ def notify_overdue(req: M.BorrowRequest):
             subject="Item overdue",
             description=f"\"{req.item.title}\" was due {req.return_date}. Please return it.",
         )
+
+def notify_wishlist_available(wishlist_item: M.Item, user: M.Borrower):
+    """Notify the user that a wishlist item is now available."""
+    M.BorrowerNotification.objects.create(
+        recipient=user,
+        subject="Wishlist item available",
+        description=f"\"{wishlist_item.title}\" is now available for borrowing!",
+    )
+
+def notify_wishlist_unavailable(wishlist_item: M.Item, user: M.Borrower):
+    """Notify the user that a wishlist item is no longer available."""
+    M.BorrowerNotification.objects.create(
+        recipient=user,
+        subject="Wishlist item unavailable",
+        description=f"\"{wishlist_item.title}\" is now unavailable!",
+    )
