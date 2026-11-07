@@ -147,49 +147,103 @@ class Item(models.Model):
     description = models.TextField(null=True)
     notes = models.TextField(null=True)
 
+    class Types(models.TextChoices):
+        VIDEOGAME = "VIDEOGAME","Video Game"
+        MOVIE = "MOVIE","Movie"
+        MUSIC = "MUSIC","Music"
+        BOOK = "BOOK","Book"
+        OTHER = "OTHER","Other"
+
+    item_type = models.CharField(max_length=15)
+    addedDate = models.DateTimeField(auto_now_add=True)
+    lastModified = models.DateTimeField(auto_now=True)
+    is_visible = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.library.name + " - " + self.title
+
+    def get_absolute_url(self):
+        return reverse("view-item", kwargs={"item_pk": self.id})
+
+    def get_item_type_display(self):
+        return Item.Types(self.item_type).label
+
+    def get_item_types_list():
+        return list(map(lambda type : Item.Types(type).label, Item.Types))
+
+
+class VideoGameManager(models.Manager):
+    def get_queryset(self, *args, **kwargs):
+        queryset = super().get_queryset(*args, **kwargs)
+        return queryset.filter(item_type=Item.Types.VIDEOGAME)
+
+class VideoGame(Item):
+    objects = VideoGameManager()
+
     FORMAT_CHOICES = [
-        ("Video Game", (
-                ("NS2", "Nintendo Switch 2"),
-                ("NS", "Nintendo Switch"),
-                ("WU", "Nintendo Wii U"),
-                ("3DS", "Nintendo 3DS"),
-                ("Wii", "Nintendo Wii"),
-                ("Wii U", "Nintendo Wii U"),
-                ("N3DS", "Nintendo 3DS"),
-                ("NDS", "Nintendo DS"),
-                ("GCN", "Nintendo GameCube"),
-                ("N64", "Nintendo 64"),
-                ("SNES", "Nintendo SNES"),
-                ("PS5", "Playstation 5"),
-                ("PS4", "Playstation 4"),
-                ("PS3", "Playstation 3"),
-                ("PS2", "Playstation 2"),
-                ("PS1", "Playstation 1"),
-                ("XS", "Xbox Series X/S"),
-                ("XOne", "Xbox One"),
-                ("X360", "Xbox 360"),
-                ("Xbox", "Xbox"),),
-        ),
-        ("Movie", (
-            ("UHD", "4K Blu-Ray"),
-            ("BR", "Blu-Ray"),
-            ("HD-DVD", "HD-DVD"),
-            ("DVD", "DVD"),
-            ("LD", "Laser-Disc"),),
-        ),
-        ("Music", (
-            ("CD", "CD"),
-            ("RD-70", "70mm Record"),
-            ("RD-45", "45mm Record"),
-            ("CT", "Cassette Tape"),
-            ("8T", "8-Track"),
-            ("LP", "Vinyl Record"),),
-        ),
-        ("Book", "Physical Book"),
-        ("Other", "Other"),
+        ("NS2", "Nintendo Switch 2"),
+        ("NS", "Nintendo Switch"),
+        ("WU", "Nintendo Wii U"),
+        ("3DS", "Nintendo 3DS"),
+        ("Wii", "Nintendo Wii"),
+        ("NDS", "Nintendo DS"),
+        ("GCN", "Nintendo GameCube"),
+        ("PS5", "Playstation 5"),
+        ("PS4", "Playstation 4"),
+        ("PS3", "Playstation 3"),
+        ("PS2", "Playstation 2"),
+        ("PS1", "Playstation 1"),
+        ("XS", "Xbox Series X/S"),
+        ("XOne", "Xbox One"),
+        ("X360", "Xbox 360"),
+        ("Xbox", "Xbox")
+    ]
+
+    AGE_RATING_CHOICES = [
+        ("E", "E"),
+        ("E10", "E-10+"),
+        ("T", "T"),
+        ("M", "M"),
+        ("A", "A"),
     ]
 
     item_format = models.CharField(max_length=15, choices=FORMAT_CHOICES)
+    age_rating = models.CharField(max_length=15, choices=AGE_RATING_CHOICES)
+
+    def get_format_display(self) -> str:
+        for item_format in VideoGame.FORMAT_CHOICES:
+            if self.item_format == item_format[0]:
+                return item_format[1]
+        return "undefined"
+
+    def get_age_display(self) -> str:
+        for age_rating in VideoGame.AGE_RATING_CHOICES:
+            if self.age_rating == age_rating[0]:
+                return age_rating[1]
+        return "undefined"
+
+    def save(self, *args, **kwargs):
+        self.item_type = Item.Types.VIDEOGAME
+        return super().save(*args, **kwargs)
+
+    def __str__(self) -> str:
+        return self.get_format_display() + " - " + self.library.name + " - " + self.title
+
+class MovieManager(models.Manager):
+    def get_queryset(self, *args, **kwargs):
+        queryset = super().get_queryset(*args, **kwargs)
+        return queryset.filter(item_type=Item.Types.MOVIE)
+
+class Movie(Item):
+    objects = MovieManager()
+
+    FORMAT_CHOICES = [
+        ("UHD", "4K Blu-Ray"),
+        ("BR", "Blu-Ray"),
+        ("HD-DVD", "HD-DVD"),
+        ("DVD", "DVD"),
+        ("LD", "Laser-Disc")
+    ]
 
     AGE_RATING_CHOICES = [
         ("Y7", "Y-7"),
@@ -200,25 +254,122 @@ class Item(models.Model):
         ("TV-14", "TV-14"),
         ("TV-16", "TV-16"),
         ("TV-18", "TV-18"),
-        ("R", "R"),
-        ("E", "E"),
-        ("E10", "E-10+"),
-        ("T", "T"),
-        ("M", "M"),
-        ("A", "A"),
+        ("R", "R")
     ]
 
-    age_rating = models.CharField(max_length=15,choices=AGE_RATING_CHOICES)
-    addedDate = models.DateTimeField(auto_now_add=True)
-    lastModified = models.DateTimeField(auto_now=True)
-    is_visible = models.BooleanField(default=True)
-    is_borrowed = models.BooleanField(default=False)
+    item_format = models.CharField(max_length=15, choices=FORMAT_CHOICES)
+    age_rating = models.CharField(max_length=15, choices=AGE_RATING_CHOICES)
 
-    def __str__(self):
-        return self.library.name + " - " + self.title
+    def get_format_display(self) -> str:
+        for item_format in Movie.FORMAT_CHOICES:
+            if self.item_format == item_format[0]:
+                return item_format[1]
+        return "undefined"
 
-    def get_absolute_url(self):
-        return reverse("view-item", kwargs={"item_pk": self.id})
+    def get_age_display(self) -> str:
+        for age_rating in Movie.AGE_RATING_CHOICES:
+            if self.age_rating == age_rating[0]:
+                return age_rating[1]
+        return "undefined"
+
+    def save(self, *args, **kwargs):
+        self.item_type = Item.Types.MOVIE
+        return super().save(*args, **kwargs)
+
+    def __str__(self) -> str:
+        return self.get_format_display() + " - " + self.library.name + " - " + self.title
+
+
+class MusicManager(models.Manager):
+    def get_queryset(self, *args, **kwargs):
+        queryset = super().get_queryset(*args, **kwargs)
+        return queryset.filter(item_type=Item.Types.MUSIC)
+
+class Music(Item):
+    objects = MusicManager()
+
+    FORMAT_CHOICES = [
+        ("CD", "CD"),
+        ("RD-70", "70mm Record"),
+        ("RD-45", "45mm Record"),
+        ("CT", "Cassette Tape"),
+        ("8T", "8-Track")
+    ]
+
+    AGE_RATING_CHOICES = [
+        ("Y", "Youth"),
+        ("G", "General"),
+        ("YA", "Young Adult"),
+        ("T", "Tean"),
+        ("A", "Adult")
+    ]
+
+    item_format = models.CharField(max_length=15, choices=FORMAT_CHOICES)
+    age_rating = models.CharField(max_length=15, choices=AGE_RATING_CHOICES)
+
+    def get_format_display(self) -> str:
+        for item_format in Music.FORMAT_CHOICES:
+            if self.item_format == item_format[0]:
+                return item_format[1]
+        return "undefined"
+
+    def get_age_display(self) -> str:
+        for age_rating in Music.AGE_RATING_CHOICES:
+            if self.age_rating == age_rating[0]:
+                return age_rating[1]
+        return "undefined"
+
+    def save(self, *args, **kwargs):
+        self.item_type = Item.Types.MUSIC
+        return super().save(*args, **kwargs)
+
+    def __str__(self) -> str:
+        return self.get_format_display() + " - " + self.library.name + " - " + self.title
+
+
+class BookManager(models.Manager):
+    def get_queryset(self, *args, **kwargs):
+        queryset = super().get_queryset(*args, **kwargs)
+        return queryset.filter(item_type=Item.Types.BOOK)
+
+class Book(Item):
+    objects = BookManager()
+
+    FORMAT_CHOICES = [
+        ("HARD", "Hard Cover"),
+        ("SOFT", "Soft Cover"),
+        ("ADIO", "Audiobook")
+    ]
+
+    AGE_RATING_CHOICES = [
+        ("Y", "Youth"),
+        ("G", "General"),
+        ("YA", "Young Adult"),
+        ("T", "Tean"),
+        ("A", "Adult")
+    ]
+
+    item_format = models.CharField(max_length=15, choices=FORMAT_CHOICES)
+    age_rating = models.CharField(max_length=15, choices=AGE_RATING_CHOICES)
+
+    def get_format_display(self) -> str:
+        for item_format in Book.FORMAT_CHOICES:
+            if self.item_format == item_format[0]:
+                return item_format[1]
+        return "undefined"
+
+    def get_age_display(self) -> str:
+        for age_rating in Book.AGE_RATING_CHOICES:
+            if self.age_rating == age_rating[0]:
+                return age_rating[1]
+        return "undefined"
+
+    def save(self, *args, **kwargs):
+        self.item_type = Item.Types.BOOK
+        return super().save(*args, **kwargs)
+
+    def __str__(self) -> str:
+        return self.get_format_display() + " - " + self.library.name + " - " + self.title
 
 class BorrowRequest(models.Model):
     borrower = models.ForeignKey(Borrower, on_delete=models.SET_NULL, null=True)
@@ -234,6 +385,12 @@ class BorrowRequest(models.Model):
     ]
 
     status = models.CharField(max_length=31, choices=STATUS_CHOICES, default="RQ")
+
+    def get_status_choice_display(self) -> str:
+        for status in BorrowRequest.STATUS_CHOICES:
+            if self.status == status[0]:
+                return status[1]
+        return "undefined"
 
     def __str__(self):
         return self.status + " - " + self.item.title + " - " + self.borrower.username

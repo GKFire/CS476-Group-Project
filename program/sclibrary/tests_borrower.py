@@ -122,7 +122,7 @@ class ItemFormRenderTests(TestCase):
     def test_add_item_form_uses_visible_fields_and_submits(self):
         lender = make_lender()
         self.client.login(username="lena", password="pw12345!")
-        page = self.client.get(reverse("create-item"))
+        page = self.client.get(reverse("create-item"), query_params={"type": "videogame"})
         self.assertContains(page, 'class="sc-form"')
         self.assertContains(page, "<select")
         data = {"title": "Zelda", "release": "2020-01-01", "producer": "Nintendo", "condition": "Good",

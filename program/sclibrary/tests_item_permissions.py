@@ -83,6 +83,8 @@ class ItemPermissionTests(TestCase):
             "condition": "Like New",
             "description": "Updated by the owner",
             "notes": "Owner updated this item",
+            "item_format": "NS",
+            "age_rating": "E",
             "is_visible": "on"
         })
 

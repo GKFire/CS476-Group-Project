@@ -18,7 +18,7 @@ def make_borrower(name="bob"):
 
 
 def make_item(lender, title="Zelda"):
-    return M.Item.objects.create(
+    return M.VideoGame.objects.create(
         library=lender.library, title=title, release=date(2020, 1, 1), producer="Nintendo",
         condition="Good", description="d", notes="n", item_format="NS", age_rating="E",
     )

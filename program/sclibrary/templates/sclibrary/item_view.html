@@ -1,0 +1,73 @@
+{% extends "sclibrary/template_page_overview.html" %}
+
+
+
+{% block navigation %}
+    {% if request.user.user_type != "LENDER" %}
+    <div style="margin: 5px auto; text-align: center;">
+        <h4>{{ item.library.name }}</h4>
+        <p>Owner: {{ item.library.owner.username }} | {{ item.library.owner.email }}</p>
+    </div>
+    {% endif %}
+    <ul class="options-list">
+    {% if request.user.user_type == "LENDER" %}
+        <li><a class="waves-effect waves-light green btn" href="{% url 'myprofile-requests' %}">View Requests for this Item</a></li>
+        <li><a class="waves-effect waves-light green btn" href="{% url 'edit-item' item.id %}">Edit Item</a></li>
+        <li><a class="waves-effect waves-light green btn" href="{% url 'delete-item' item.id %}">Delete Item</a></li>
+    {% else %}
+        <li><a class="waves-effect waves-light green btn" href="{% url 'search' %}?library={{ item.library.id }}">View Containing Library</a></li>
+        <li><a class="waves-effect waves-light green btn" href="{% url 'view-lender' item.library.owner.id %}">View Owner of Item</a></li>
+        {% if borrow_request != None %}
+            <li><a class="waves-effect waves-light btn disabled">Request Item</a></li>
+        {% else%}
+            <li><a class="waves-effect waves-light green btn" href="{% url 'create-request' item.id %}">Request Item</a></li>
+        {% endif %}
+    {% endif %}
+    </ul>
+{% endblock %}
+
+
+{% block content %}
+<div>
+    <h3>{{ item.title }}</h3>
+    {% if item.item_type == "VIDEOGAME" %}
+        <p>{{ item.videogame.get_format_display }} -- {{ item.videogame.get_age_display }}</p>
+    {% elif item.item_type == "MOVIE" %}
+        <p>{{ item.movie.get_format_display }} -- {{ item.movie.get_age_display }}</p>
+    {% elif item.item_type == "MUSIC" %}
+        <p>{{ item.music.get_format_display }} -- {{ item.music.get_age_display }}</p>
+    {% elif item.item_type == "BOOK" %}
+        <p>{{ item.book.get_format_display }} -- {{ item.book.get_age_display }}</p>
+    {%endif%}
+    <p>Release: {{ item.release }}</p>
+    <p>Producer: {{ item.producer }}</p>
+    <p>Description: {{ item.description }}</p>
+    <p>Condition: {{ item.condition }}</p>
+    <p>Notes: {{ item.notes }}</p>
+    {% if request.user.user_type == "LENDER" %}
+        <p>Created: {{ item.addedDate }}</p>
+        <p>Last Modified: {{ item.lastModified }}</p>
+        <p>{% if item.is_visible %} Currently visible to Borrowers {% else %} Not visible to Borrowers {% endif %}</p>
+        {% if borrow_request == None %}
+            <p>Currently not being borrowed by anyone</p>
+        {% else %}
+            <a href="{% url 'view-request' borrow_request.id %}">Currently being borrowed by {{ borrow_request.borrower.username }}</a>
+        {% endif %}
+    {% else %}
+        {% if borrow_request == None %}
+            <p>This item is currently available for <a href="{% url 'create-request' item.id %}">request</a>.</p>
+        {% elif borrow_request.borrower == request.user.borrower %}
+            <p>This item is currently being borrowed by you.</p>
+            <p>You can view the status of your <a href="{% url 'view-request' borrow_request.id %}">request here</a></p>
+        {% else%}
+            <p>This item is currently being borrowed by someone else.</p>
+            <p>You will be able to request for this item after {{ borrow_request.return_date }}</p>
+        {% endif %}
+    {% endif %}
+</div>
+{% endblock %}
+
+
+{% block options %}
+
+{% endblock %}

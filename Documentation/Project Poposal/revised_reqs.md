@@ -50,7 +50,7 @@ Time Efficiency:
 
 **Create Request**: The borrower must have the ability to make a request for an item from a lender
 
-**Suggest Return Date**: suggest a return date in the request.
+**Suggest Return Date**: The borrower must have the ability to suggest a return date in the request.
 
 **Show borrowing**: The borrower must have the ability to what items they are currently borrowing, and from whom
 

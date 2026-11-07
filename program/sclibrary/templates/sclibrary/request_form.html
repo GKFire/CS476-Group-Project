@@ -2,7 +2,7 @@
 
 {% block content %}
 <h5>Request to borrow: {{ item.title }}</h5>
-<p>From {{ item.library.name }} ({{ item.get_item_format_display }})</p>
+<p>From {{ item.library.name }} ({{ item.get_item_type_display }})</p>
 <form method="post" class="sc-form">
     {% csrf_token %}
     {% include "sclibrary/_form_fields.html" %}

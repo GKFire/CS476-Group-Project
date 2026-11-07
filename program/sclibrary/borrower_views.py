@@ -3,7 +3,6 @@
 Kept in their own module, like request_views.py, so they don't collide with
 edits to views.py.
 """
-from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
 from django.http import HttpRequest, HttpResponseForbidden
@@ -12,23 +11,19 @@ from django.shortcuts import get_object_or_404, redirect, render
 import sclibrary.models as M
 from sclibrary import services
 from sclibrary.forms.request import BorrowRequestForm
-from sclibrary.forms.user import RegisterForm
+
+from sclibrary.forms.items import get_searchset, getBorrowHistory
 
 BORROWER = M.UserAccount.Types.BORROWER
 
-
-def register(request: HttpRequest):
-    if request.user.is_authenticated:
-        return redirect("home")
-    if request.method == "POST":
-        form = RegisterForm(request.POST)
-        if form.is_valid():
-            user = form.save()
-            login(request, user, backend="django.contrib.auth.backends.ModelBackend")
-            return redirect("home")
-    else:
-        form = RegisterForm()
-    return render(request, "sclibrary/page_register.html", {"form": form})
+@login_required
+def search(request: HttpRequest):
+    if request.user.user_type != BORROWER:
+        return HttpResponseForbidden("Only borrowers can access the search.")
+    library = None
+    if request.GET.get("library") != None:
+        library = int(request.GET.get("library"))
+    return render(request, "sclibrary/page_search.html", {"item_list": get_searchset(request), "library": M.Library.objects.filter(id=library).first(), "libraries": M.Library.objects.all(), "type_list": M.Item.Types})
 
 
 @login_required
@@ -54,9 +49,10 @@ def send_borrow_request(request: HttpRequest, item_pk: int):
         form = BorrowRequestForm()
     return render(request, "sclibrary/request_form.html", {"form": form, "item": item})
 
-
-def logout_view(request: HttpRequest):
-    """Sign out from a normal link. Django 5+ LogoutView only accepts POST,
-    which made the top bar's "Sign out" link return HTTP 405."""
-    logout(request)
-    return redirect("login")
+@login_required
+def viewLender(request: HttpRequest, user_pk: int):
+    lender = M.Lender.objects.get(id=user_pk)
+    if not lender:
+        return render(request, "sclibrary/user_view.html", {"invalid": True})
+    borrower_history = getBorrowHistory(request.user.id, lender.library.id)
+    return render(request, "sclibrary/user_view.html", {"lender": lender, "borrow_history": borrower_history})
