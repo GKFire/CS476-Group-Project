@@ -17,9 +17,9 @@ class BorrowRequestForm(forms.Form):
             self.add_error("start_date", "The earliest date cannot be in the past.")
         if ret and ret < today:
             self.add_error("return_date", "The latest date cannot be in the past.")
-        if start and ret and ret <= start:
-            self.add_error("return_date", "The latest date must be after the earliest date.")
-        days_difference = (ret - start).days
-        if days_difference < 7:
-            self.add_error("return_date", "The latest date must be at least one week after the earliest date.")
+        if start and ret:
+            if ret <= start:
+                self.add_error("return_date", "The latest date must be after the earliest date.")
+            elif (ret - start).days < 7:
+                self.add_error("return_date", "The latest date must be at least one week after the earliest date.")
         return cleaned
