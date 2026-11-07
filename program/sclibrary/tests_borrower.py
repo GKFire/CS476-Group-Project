@@ -130,3 +130,20 @@ class ItemFormRenderTests(TestCase):
         r = self.client.post(reverse("create-item"), data)
         item = M.Item.objects.get(title="Zelda", library=lender.library)
         self.assertRedirects(r, reverse("view-item", args=[item.pk]), fetch_redirect_response=False)
+
+
+
+
+class BorrowRequestFormTests(TestCase):
+    def test_blank_date_shows_error_instead_of_crashing(self):
+        from sclibrary.forms.request import BorrowRequestForm
+        f = BorrowRequestForm({"start_date": "", "return_date": (date.today() + timedelta(days=10)).isoformat()})
+        self.assertFalse(f.is_valid())
+        self.assertIn("start_date", f.errors)
+
+    def test_range_must_be_at_least_a_week(self):
+        from sclibrary.forms.request import BorrowRequestForm
+        s = date.today() + timedelta(days=1)
+        f = BorrowRequestForm({"start_date": s, "return_date": s + timedelta(days=3)})
+        self.assertFalse(f.is_valid())
+        self.assertIn("at least one week", str(f.errors))
