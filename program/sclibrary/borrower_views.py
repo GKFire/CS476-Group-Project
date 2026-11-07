@@ -59,4 +59,4 @@ def logout_view(request: HttpRequest):
     """Sign out from a normal link. Django 5+ LogoutView only accepts POST,
     which made the top bar's "Sign out" link return HTTP 405."""
     logout(request)
-    return redirect("index")
+    return redirect("login")

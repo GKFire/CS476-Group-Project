@@ -3,19 +3,19 @@
 {% block navigation %}
 {% if user_type == "LENDER" %}
 <ul>
-  <li><a href="{% url 'create-item' %}">Create Item</a></li>
-  <li><a href="{% url 'myprofile-requests' %}">View Requests</a></li>
+  <li><a class="button" href="{% url 'create-item' %}">Create Item</a></li>
+  <li><a class="button" href="{% url 'myprofile-requests' %}">View Requests</a></li>
   <ul>
-    <li><a href="{% url 'myprofile-requests' %}">Ongoing Loans</a></li>
-    <li><a href="{% url 'myprofile-requests' %}">Overdue Loans</a></li>
+    <li><a class="button" href="{% url 'myprofile-requests' %}">Ongoing Loans</a></li>
+    <li><a class="button" href="{% url 'myprofile-requests' %}">Overdue Loans</a></li>
   </ul>
 </ul>
 {% elif user_type == "BORROWER" %}
 <ul>
-  <li><a href="{% url 'myprofile-requests' %}">View Requests</a></li>
+  <li><a class="button" href="{% url 'myprofile-requests' %}">View Requests</a></li>
   <ul>
-    <li><a href="{% url 'myprofile-requests' %}">Ongoing Loans</a></li>
-    <li><a href="{% url 'myprofile-requests' %}">Overdue Loans</a></li>
+    <li><a class="button" href="{% url 'myprofile-requests' %}">Ongoing Loans</a></li>
+    <li><a class="button" href="{% url 'myprofile-requests' %}">Overdue Loans</a></li>
   </ul>
 </ul>
 {% else %}
