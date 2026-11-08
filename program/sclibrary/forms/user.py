@@ -51,3 +51,19 @@ class RegisterForm(forms.Form):
         model = (SCLibraryModels.Lender if d["account_type"] == SCLibraryModels.UserAccount.Types.LENDER
                  else SCLibraryModels.Borrower)
         return model.objects.create_user(d["username"], d["email"], d["password1"])
+
+class ChangeUsername(forms.Form):
+    newUsername1 = forms.CharField(label="New Username", max_length=63)
+    newUsername2 = forms.CharField(label="Confirm New Username", max_length=63)
+
+    def clean(self):
+        cleaned = super().clean()
+        newUsername1, newUsername2 = cleaned.get("newUsername1"), cleaned.get("newUsername2")
+        if newUsername1 and newUsername2 and newUsername1 != newUsername2:
+            self.add_error("newUsername2", "Usernames do not match!")
+        if newUsername1 and SCLibraryModels.UserAccount.objects.filter(username=newUsername1).exists():
+            self.add_error("newUsername1", "That username is already taken!")
+        return cleaned
+    
+                
+

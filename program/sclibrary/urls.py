@@ -9,6 +9,7 @@ urlpatterns = [
     path("logout/", views.logout_view, name="logout"),
     path("register/", views.register, name="register"),
     path("home/", views.home, name="home"), # default for logged-in users
+    path("changeusername/", views.change_username, name="change-username"),
 
     path("myprofile/requests/", request_views.request_list, name="myprofile-requests"), # borrower sees list of requests assoicated with them, lender sees list of requests on items they own
 

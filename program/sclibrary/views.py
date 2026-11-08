@@ -44,6 +44,18 @@ def home(request: HttpRequest):
     return render(request, "sclibrary/page_home.html", {"libraries": libraries})
 
 @login_required
+def change_username(request: HttpRequest):
+    if request.method == "POST":
+        form = UserForm.ChangeUsername(request.POST)
+        if form.is_valid():
+            request.user.username = form.cleaned_data["newUsername1"]
+            request.user.save()
+            return redirect("home")
+    else:
+        form = UserForm.ChangeUsername()
+    return render(request, "sclibrary/page_change_username.html", {"form": form})
+
+@login_required
 def myprofileRequests(request: HttpRequest):
     if (request.user.user_type == USER_TYPES.LENDER):
         return HttpResponse(request.user.lender.library)
