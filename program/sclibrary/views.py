@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.http import JsonResponse
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import update_session_auth_hash
 
 from django.http import HttpRequest, HttpResponse, HttpResponseForbidden
 import sclibrary.models as SCLibraryModels
@@ -44,16 +45,59 @@ def home(request: HttpRequest):
     return render(request, "sclibrary/page_home.html", {"libraries": libraries})
 
 @login_required
+def change_info(request: HttpRequest):
+    return render(request, "sclibrary/page_change_info.html")
+
+@login_required
 def change_username(request: HttpRequest):
     if request.method == "POST":
         form = UserForm.ChangeUsername(request.POST)
         if form.is_valid():
-            request.user.username = form.cleaned_data["newUsername1"]
+            newUsername = form.cleaned_data["newUsername1"]
+            request.user.username = newUsername
             request.user.save()
             return redirect("home")
     else:
         form = UserForm.ChangeUsername()
     return render(request, "sclibrary/page_change_username.html", {"form": form})
+
+@login_required
+def change_password(request: HttpRequest):
+    if request.method == "POST":
+        form = UserForm.ChangePassword(request.POST)
+        if form.is_valid():
+            current_password = form.cleaned_data["currentPassword"]
+            new_password = form.cleaned_data["newPassword1"]
+            if not request.user.check_password(current_password):
+                form.add_error("currentPassword", "That was not your current password!")
+                return render(request, "sclibrary/page_change_password.html", {"form": form})
+            
+            request.user.set_password(new_password)
+            request.user.save()
+            update_session_auth_hash(request, request.user)
+
+            return redirect("home")
+    else:
+        form = UserForm.ChangePassword()
+    return render(request, "sclibrary/page_change_password.html", {"form": form})
+
+@login_required
+def change_email(request: HttpRequest):
+    if request.method == "POST":
+        form = UserForm.ChangeEmail(request.POST)
+        if form.is_valid():
+            current_email = form.cleaned_data["currentEmail"]
+            new_email = form.cleaned_data["newEmail1"]
+            if current_email != request.user.email:
+                form.add_error("currentEmail", "This is not your current email!")
+                return render(request, "sclibrary/page_change_email.html", {"form": form})
+            
+            request.user.email = form.cleaned_data["newEmail1"]
+            request.user.save()
+            return redirect("home")
+    else:
+        form = UserForm.ChangeEmail()
+    return render(request, "sclibrary/page_change_email.html", {"form": form})
 
 @login_required
 def myprofileRequests(request: HttpRequest):

@@ -64,6 +64,31 @@ class ChangeUsername(forms.Form):
         if newUsername1 and SCLibraryModels.UserAccount.objects.filter(username=newUsername1).exists():
             self.add_error("newUsername1", "That username is already taken!")
         return cleaned
-    
+
+class ChangeEmail(forms.Form):
+    currentEmail = forms.EmailField(label="Current Email", max_length=255)
+    newEmail1 = forms.EmailField(label="New Email", max_length=255)
+    newEmail2 = forms.EmailField(label="Confirm New Email", max_length=255)
+
+    def clean(self):
+        cleaned = super().clean()
+        currentEmail, newEmail1, newEmail2 = cleaned.get("currentEmail"), cleaned.get("newEmail1"), cleaned.get("newEmail2")
+        if newEmail1 and newEmail2 and newEmail1 != newEmail2:
+            self.add_error("newEmail2", "Emails do not match!")
+        if newEmail1 and SCLibraryModels.UserAccount.objects.filter(email=newEmail1).exists():
+            self.add_error("newEmail1", "An account with that email already exists!")
+        return cleaned
+
+class ChangePassword(forms.Form):
+    currentPassword = forms.CharField(label="Current Password", widget=forms.PasswordInput())
+    newPassword1 = forms.CharField(label="New Password", widget=forms.PasswordInput())
+    newPassword2 = forms.CharField(label="Confirm New Password", widget=forms.PasswordInput())
+
+    def clean(self):
+        cleaned = super().clean()
+        currentPassword, newPassword1, newPassword2 = cleaned.get("currentPassword"), cleaned.get("newPassword1"), cleaned.get("newPassword2")
+        if newPassword1 and newPassword2 and newPassword1 != newPassword2:
+            self.add_error("newPassword2", "Passwords do not match!")
+        return cleaned
                 
 

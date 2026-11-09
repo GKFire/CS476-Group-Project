@@ -1,0 +1,8 @@
+{% extends "sclibrary/template_page_overview.html" %}
+
+{% block content %}
+<h5>Change Info for {{request.user.username}}</h5>
+<li><a class="waves-effect waves-light green btn" href="{% url 'change-username' %}">Change Username</a></li>
+<li><a class="waves-effect waves-light green btn" href="{% url 'change-password' %}">Change Password</a></li>
+<li><a class="waves-effect waves-light green btn" href="{% url 'change-email' %}">Change Email</a></li>
+{% endblock %}
