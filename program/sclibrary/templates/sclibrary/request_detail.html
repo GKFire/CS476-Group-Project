@@ -1,7 +1,7 @@
 {% extends "sclibrary/base_simple.html" %}
 {% block content %}
 <h4>Request for "{{ req.item.title }}"</h4>
-<p>Borrower: {{ req.borrower.username|default:"(deleted user)" }}<br>
+<p>Borrower: {% if req.borrower.username != None %} <a href="{% url 'view-borrower' req.borrower.id %}">{{ req.borrower.username }}</a>{% else %}(deleted user){% endif %}<br>
    Start: {{ req.start_date }} &middot; Return: {{ req.return_date }}<br>
    Status: {{ req.get_status_display }}{% if overdue %} <strong>(OVERDUE)</strong>{% endif %}</p>
 

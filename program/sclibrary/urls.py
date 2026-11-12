@@ -1,7 +1,7 @@
 from django.urls import path
-from django.contrib.auth.views import LoginView, LogoutView
-from django.conf import settings
-from . import views, borrower_views, lender_views, request_views, wishlist_views
+from django.contrib.auth.views import LoginView
+import sclibrary.views as views
+from .subviews import borrower_views, lender_views, request_views, wishlist_views
 
 urlpatterns = [
     path("", views.index, name="index"), # only seen by new users
@@ -13,6 +13,7 @@ urlpatterns = [
     path("changeinfo/username/", views.change_username, name="change-username"),
     path("changeinfo/password/", views.change_password, name="change-password"),
     path("changeinfo/email/", views.change_email, name="change-email"),
+    path("changeinfo/library/", lender_views.change_library, name="change-library"),
 
     path("myprofile/requests/", request_views.request_list, name="myprofile-requests"), # borrower sees list of requests assoicated with them, lender sees list of requests on items they own
 

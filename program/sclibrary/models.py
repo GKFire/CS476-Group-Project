@@ -162,6 +162,9 @@ class Item(models.Model):
     def __str__(self):
         return self.library.name + " - " + self.title
 
+    def get_icon_name(self) -> str:
+        return "collections"
+
     def get_absolute_url(self):
         return reverse("view-item", kwargs={"item_pk": self.id})
 
@@ -213,6 +216,9 @@ class VideoGame(Item):
     item_format = models.CharField(max_length=15, choices=FORMAT_CHOICES)
     age_rating = models.CharField(max_length=15, choices=AGE_RATING_CHOICES)
 
+    def __str__(self) -> str:
+        return self.get_format_display() + " - " + self.library.name + " - " + self.title
+
     def get_format_display(self) -> str:
         for item_format in VideoGame.FORMAT_CHOICES:
             if self.item_format == item_format[0]:
@@ -229,8 +235,8 @@ class VideoGame(Item):
         self.item_type = Item.Types.VIDEOGAME
         return super().save(*args, **kwargs)
 
-    def __str__(self) -> str:
-        return self.get_format_display() + " - " + self.library.name + " - " + self.title
+    def get_icon_name(self) -> str:
+        return "gamepad"
 
 class MovieManager(models.Manager):
     def get_queryset(self, *args, **kwargs):
@@ -282,6 +288,9 @@ class Movie(Item):
     def __str__(self) -> str:
         return self.get_format_display() + " - " + self.library.name + " - " + self.title
 
+    def get_icon_name(self) -> str:
+        return "movie"
+
 
 class MusicManager(models.Manager):
     def get_queryset(self, *args, **kwargs):
@@ -329,6 +338,9 @@ class Music(Item):
     def __str__(self) -> str:
         return self.get_format_display() + " - " + self.library.name + " - " + self.title
 
+    def get_icon_name(self) -> str:
+        return "library-music"
+
 
 class BookManager(models.Manager):
     def get_queryset(self, *args, **kwargs):
@@ -373,6 +385,9 @@ class Book(Item):
 
     def __str__(self) -> str:
         return self.get_format_display() + " - " + self.library.name + " - " + self.title
+
+    def get_icon_name(self) -> str:
+        return "book"
 
 class BorrowRequest(models.Model):
     borrower = models.ForeignKey(Borrower, on_delete=models.SET_NULL, null=True)

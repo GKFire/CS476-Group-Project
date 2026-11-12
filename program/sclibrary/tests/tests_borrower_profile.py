@@ -5,7 +5,7 @@ from django.test import TestCase
 from django.urls import reverse
 
 import sclibrary.models as M
-from sclibrary.tests import make_borrower, make_lender, make_item
+from sclibrary.tests.tests import make_borrower, make_lender, make_item
 
 
 class BorrowerProfileTests(TestCase):
@@ -16,7 +16,7 @@ class BorrowerProfileTests(TestCase):
         self.lender = make_lender("profile_lena")
         self.item = make_item(self.lender, "Mario Kart")
 
-        self.url = reverse("myprofile")
+        self.url = reverse("myprofile-requests")
         self.client.force_login(self.borrower)
 
     def create_loan(self, status, borrower=None, item=None):
