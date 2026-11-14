@@ -5,7 +5,7 @@ from django.test import TestCase
 from django.urls import reverse
 
 import sclibrary.models as M
-from sclibrary.tests import make_borrower, make_item, make_lender
+from sclibrary.tests.tests import make_borrower, make_item, make_lender
 
 PW = "Str0ng-pass-476"
 
