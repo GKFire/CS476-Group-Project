@@ -29,32 +29,44 @@ class BorrowerProfileTests(TestCase):
         )
 
     def test_active_loan(self):
-        loan = self.create_loan("AC")
+        loan_1 = self.create_loan("AC")
+        loan_2 = self.create_loan("AC")
 
-        response = self.client.get(self.url)
+        response = self.client.get(self.url, headers={"status": "AC"})
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.context["active_loans"].count(), 1)
-        self.assertEqual(response.context["active_loans"].first(), loan)
+        self.assertEqual(response.context["requests"].count(), 2)
+        self.assertEqual(response.context["requests"].first(), loan_1)
+        self.assertEqual(response.context["requests"][1], loan_2)
         self.assertContains(response, "Mario Kart")
 
     def test_borrowing_history(self):
         loan = self.create_loan("CD")
 
-        response = self.client.get(self.url)
+        response = self.client.get(self.url, query_params={"status": "CD"})
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.context["borrowing_history"].count(), 1)
-        self.assertEqual(response.context["borrowing_history"].first(), loan)
+        self.assertEqual(response.context["requests"].count(), 1)
+        self.assertEqual(response.context["requests"].first(), loan)
 
     def test_pending_and_rejected_requests(self):
-        self.create_loan("RQ")
-        self.create_loan("RJ")
+        loan_1 = self.create_loan("RQ")
+        loan_2 = self.create_loan("RJ")
 
-        response = self.client.get(self.url)
+        response_active = self.client.get(self.url, query_params={"status": "AC"})
+        self.assertEqual(response_active.context["requests"].count(), 0)
 
-        self.assertEqual(response.context["active_loans"].count(), 0)
-        self.assertEqual(response.context["borrowing_history"].count(), 0)
+        response_concluded = self.client.get(self.url, query_params={"status": "CD"})
+        self.assertEqual(response_concluded.context["requests"].count(), 0)
+
+        response_requested = self.client.get(self.url, query_params={"status": "RQ"})
+        self.assertEqual(response_requested.context["requests"].count(), 1)
+        self.assertEqual(response_requested.context["requests"].first(), loan_1)
+
+        response_rejected = self.client.get(self.url, query_params={"status": "RJ"})
+        self.assertEqual(response_rejected.context["requests"].count(), 1)
+        self.assertEqual(response_rejected.context["requests"].first(), loan_2)
+
 
     def test_borrower_sees_only_own_loans(self):
         other_item = make_item(self.lender, "Minecraft")
@@ -62,17 +74,24 @@ class BorrowerProfileTests(TestCase):
         self.create_loan("AC")
         self.create_loan("AC", self.other_borrower, other_item)
 
-        response = self.client.get(self.url)
+        response = self.client.get(self.url, query_params={"status": "AC"})
 
         self.assertContains(response, "Mario Kart")
         self.assertNotContains(response, "Minecraft")
-        self.assertEqual(response.context["active_loans"].count(), 1)
+        self.assertEqual(response.context["requests"].count(), 1)
 
     def test_empty_profile(self):
-        response = self.client.get(self.url)
+        response = self.client.get(self.url, query_params={"status": "RQ"})
+        self.assertContains(response, "No requests.")
 
-        self.assertContains(response, "You have no items currently borrowed.")
-        self.assertContains(response, "No borrowing history yet.")
+        response = self.client.get(self.url, query_params={"status": "AC"})
+        self.assertContains(response, "No requests.")
+
+        response = self.client.get(self.url, query_params={"status": "CD"})
+        self.assertContains(response, "No requests.")
+
+        response = self.client.get(self.url, query_params={"status": "RJ"})
+        self.assertContains(response, "No requests.")
 
     def test_lender_profile_unchanged(self):
         self.client.force_login(self.lender)
