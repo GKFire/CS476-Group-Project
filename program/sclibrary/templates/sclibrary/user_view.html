@@ -2,9 +2,14 @@
 
 {% block navigation %}
   <div style="margin: 5px auto; text-align: center;">
+  {% if lender != None %}
       <h4>{{lender.username}}</h4>
       <p>{{lender.email}}</p>
       <p>Manages Library: {{ lender.library.name }}</p>
+  {% elif borrower != None %}
+      <h4>{{borrower.username}}</h4>
+      <p>{{borrower.email}}</p>
+  {% endif %}
   </div>
 {% if request.user.user_type == "LENDER" %}
 
@@ -28,7 +33,7 @@
 {% elif request.user.user_type == "ADMIN" %}
   <li><a class="waves-effect waves-light green btn" href="{% url 'admin' %}">Admin Panel</a></li>
 {% endif %}
-    {% if invalid != True %}
+    {% if invalid != True and lender != None %}
   <li><a class="waves-effect waves-light green btn" href="{% url 'search' %}?library={{ lender.library.id }}">Search User's Library</a></li>
     {% endif %}
   <li><a class="waves-effect waves-light green btn" href="{% url 'myprofile-requests' %}?status=RQ">View Requests</a></li>
@@ -44,42 +49,30 @@
 <div>
   <ul class="collection panel">
     {% if request.user.user_type == "LENDER" %}
-      <li class="collection-header"><h4>Ongoing Requests with: {{ borrower.username }}</h4></li>
+      <li class="collection-header"><h4>Ongoing Loans to: {{ borrower.username }}</h4></li>
     {% elif request.user.user_type == "BORROWER" %}
       <li class="collection-header"><h4>Ongoing Requests with: {{ lender.username }}</h4></li>
     {% endif %}
     {% for borrow_request in borrow_history.ongoing %}
-    {% with item=borrow_request.item %}
-    {% if item.item_type == "VIDEOGAME" %}
-      <li class="collection-item avatar"><a href="{% url 'view-request' request_pk=borrow_request.id %}"><i class="material-icons circle teal">gamepad</i><span class="title">{{ item.title }}</span><p>{{ item.release }} | {{ item.videogame.get_age_display }}<br/>{{ item.get_item_type_display }} -- {{ item.videogame.get_format_display }}</p></a></li>
-    {% elif item.item_type == "MOVIE" %}
-      <li class="collection-item avatar"><a href="{% url 'view-request' request_pk=borrow_request.id %}"><i class="material-icons circle teal">movie</i><span class="title">{{ item.title }}</span><p>{{ item.release }} | {{ item.movie.get_age_display }}<br/>{{ item.get_item_type_display }} -- {{ item.movie.get_format_display }}</p></a></li>
-    {% elif item.item_type == "MUSIC" %}
-      <li class="collection-item avatar"><a href="{% url 'view-request' request_pk=borrow_request.id %}"><i class="material-icons circle teal">library_music</i><span class="title">{{ item.title }}</span><p>{{ item.release }} | {{ item.music.get_age_display }}<br/>{{ item.get_item_type_display }} -- {{ item.music.get_format_display }}</p></a></li>
-    {% elif item.item_type == "BOOK" %}
-      <li class="collection-item avatar"><a href="{% url 'view-request' request_pk=borrow_request.id %}"><i class="material-icons circle teal">book</i><span class="title">{{ item.title }}</span><p>{{ item.release }} | {{ item.book.get_age_display }}<br/>{{ item.get_item_type_display }} -- {{ item.book.get_format_display }}</p></a></li>
-    {% else %}
-      <li class="collection-item avatar"><a href="{% url 'view-request' request_pk=borrow_request.id %}"><i class="material-icons circle teal">collections</i><span class="title">{{ item.title }}</span><p>{{ item.release }}<br/>{{ item.get_item_type_display }}</p></a></li>
-    {% endif %}
-    {% endwith %}
+      {% with item=borrow_request.1 %}
+      {% if item.item_type == "OTHER" %}
+        <li class="collection-item avatar"><a href="{% url 'view-request' request_pk=borrow_request.0.id %}"><i class="material-icons circle teal">{{ item.get_icon_name }}</i><span class="title">{{ item.title }}</span><p>{{ item.release }}<br/>{{ item.get_item_type_display }}</p></a></li>
+      {% else %}
+        <li class="collection-item avatar"><a href="{% url 'view-request' request_pk=borrow_request.0.id %}"><i class="material-icons circle teal">{{ item.get_icon_name }}</i><span class="title">{{ item.title }}</span><p>{{ item.release }} | {{ item.get_age_display }}<br/>{{ item.get_item_type_display }} -- {{ item.get_format_display }}</p></a></li>
+      {% endif %}
+      {% endwith %}
     {% endfor %}
   </ul>
 
   <ul class="collection panel">
     <li class="collection-header"><h4>Previous Lending History</h4></li>
     {% for borrow_request in borrow_history.previous %}
-    {% with item=borrow_request.item %}
-    {% if item.item_type == "VIDEOGAME" %}
-      <li class="collection-item avatar"><a href="{% url 'view-request' request_pk=borrow_request.id %}"><i class="material-icons circle teal">gamepad</i><span class="title">{{ item.title }}</span><p>{{ item.release }} | {{ item.videogame.get_age_display }}<br/>{{ item.get_item_type_display }} -- {{ item.videogame.get_format_display }}</p></a></li>
-    {% elif item.item_type == "MOVIE" %}
-      <li class="collection-item avatar"><a href="{% url 'view-request' request_pk=borrow_request.id %}"><i class="material-icons circle teal">movie</i><span class="title">{{ item.title }}</span><p>{{ item.release }} | {{ item.movie.get_age_display }}<br/>{{ item.get_item_type_display }} -- {{ item.movie.get_format_display }}</p></a></li>
-    {% elif item.item_type == "MUSIC" %}
-      <li class="collection-item avatar"><a href="{% url 'view-request' request_pk=borrow_request.id %}"><i class="material-icons circle teal">library_music</i><span class="title">{{ item.title }}</span><p>{{ item.release }} | {{ item.music.get_age_display }}<br/>{{ item.get_item_type_display }} -- {{ item.music.get_format_display }}</p></a></li>
-    {% elif item.item_type == "BOOK" %}
-      <li class="collection-item avatar"><a href="{% url 'view-request' request_pk=borrow_request.id %}"><i class="material-icons circle teal">book</i><span class="title">{{ item.title }}</span><p>{{ item.release }} | {{ item.book.get_age_display }}<br/>{{ item.get_item_type_display }} -- {{ item.book.get_format_display }}</p></a></li>
-    {% else %}
-      <li class="collection-item avatar"><a href="{% url 'view-request' request_pk=borrow_request.id %}"><i class="material-icons circle teal">collections</i><span class="title">{{ item.title }}</span><p>{{ item.release }}<br/>{{ item.get_item_type_display }}</p></a></li>
-    {% endif %}
+    {% with item=borrow_request.1 %}
+      {% if item.item_type == "OTHER" %}
+        <li class="collection-item avatar"><a href="{% url 'view-request' request_pk=borrow_request.0.id %}"><i class="material-icons circle teal">{{ item.get_icon_name }}</i><span class="title">{{ item.title }}</span><p>{{ item.release }}<br/>{{ item.get_item_type_display }}</p></a></li>
+      {% else %}
+        <li class="collection-item avatar"><a href="{% url 'view-request' request_pk=borrow_request.0.id %}"><i class="material-icons circle teal">{{ item.get_icon_name }}</i><span class="title">{{ item.title }}</span><p>{{ item.release }} | {{ item.get_age_display }}<br/>{{ item.get_item_type_display }} -- {{ item.get_format_display }}</p></a></li>
+      {% endif %}
     {% endwith %}
     {% endfor %}
   </ul>

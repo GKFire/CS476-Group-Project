@@ -1,0 +1,11 @@
+{% extends "sclibrary/template_page_overview.html" %}
+
+{% block content %}
+<h5>Update Library</h5>
+<form method="post" class="sc-form">
+    <p>Current library name: {{ request.user.lender.library.name }}</p>
+    {% csrf_token %}
+    {% include "sclibrary/_form_fields.html" %}
+    <button type="submit" class="btn red lighten-2">Update Library</button>
+</form>
+{% endblock %}

@@ -1,5 +1,4 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.http import JsonResponse
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import update_session_auth_hash
@@ -8,13 +7,12 @@ from django.http import HttpRequest, HttpResponse, HttpResponseForbidden
 import sclibrary.models as SCLibraryModels
 from sclibrary.forms.user import RegisterForm
 from django.contrib.auth import login, logout
-
-import sclibrary.forms.items as ItemForm
 import sclibrary.forms.user as UserForm
 
-from . import borrower_profile_views
+from django.apps import apps
 
 USER_TYPES = SCLibraryModels.UserAccount.Types
+sclibraryconfig = apps.get_app_config("sclibrary")
 
 # Create your views here.
 
@@ -38,10 +36,11 @@ def register(request: HttpRequest):
 @login_required
 def home(request: HttpRequest):
     if request.user.user_type == USER_TYPES.BORROWER:
-        return render(request, "sclibrary/page_home.html", {"borrowing_list": SCLibraryModels.BorrowRequest.objects.filter(status="AC",borrower=request.user.borrower)})
+        return render(request, "sclibrary/page_home.html", {"borrowing_list": list(map(lambda request: (request, sclibraryconfig.item_factory.getProperItem(request.item)), SCLibraryModels.BorrowRequest.objects.filter(status="AC",borrower=request.user.borrower)))})
     if request.user.user_type == USER_TYPES.LENDER:
-        return render(request, "sclibrary/page_home.html", {"library": SCLibraryModels.Library.objects.get(owner=request.user.lender)})
-    libraries = SCLibraryModels.Library.objects.all()
+        return render(request, "sclibrary/page_home.html", {"library": (request.user.lender.library.name, sclibraryconfig.item_factory.getProperItems(SCLibraryModels.Library.objects.get(owner=request.user.lender).item_set.all()))})
+    libraries_buffer = SCLibraryModels.Library.objects.all()
+    libraries = list(map(lambda library: (library, sclibraryconfig.item_factory.getProperItems(library.item_set.all())), libraries_buffer))
     return render(request, "sclibrary/page_home.html", {"libraries": libraries})
 
 @login_required

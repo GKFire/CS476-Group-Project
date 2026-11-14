@@ -8,37 +8,6 @@ import sclibrary.models as SCLibraryModels
 
 import django.views.generic as generic
 
-def createNewItem(type: str):
-    if not type:
-        return CreateItem
-    type = type.lower()
-    if type == "videogame":
-        return CreateVideoGameItem
-    elif type == "movie":
-        return CreateMovieItem
-    elif type == "music":
-        return CreateMusicItem
-    elif type == "book":
-        return CreateBookItem
-    else:
-        return CreateItem
-
-def editItem(item_id: int):
-    item = SCLibraryModels.Item.objects.get(id=item_id)
-    if item == None:
-        return None
-    type = item.item_type.lower()
-    if type == "videogame":
-        return EditVideoGameItem
-    elif type == "movie":
-        return EditMovieItem
-    elif type == "music":
-        return EditMusicItem
-    elif type == "book":
-        return EditBookItem
-    else:
-        return EditItem
-
 class CreateItem(forms.Form):
     title = forms.CharField(max_length=127)
     release = forms.DateField(widget=forms.DateInput(attrs={"type": "date"}), help_text="When was the physical item released?")

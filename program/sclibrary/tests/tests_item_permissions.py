@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.urls import reverse
 
-from sclibrary.tests import make_lender, make_item
+from sclibrary.tests.tests import make_lender, make_item
 
 
 class ItemPermissionTests(TestCase):

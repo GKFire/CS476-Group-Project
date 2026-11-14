@@ -3,7 +3,7 @@ from django.test import TestCase
 from django.urls import reverse
 
 from sclibrary.models import BorrowerWishList
-from sclibrary.tests import make_borrower, make_lender, make_item
+from sclibrary.tests.tests import make_borrower, make_lender, make_item
 
 
 class WishlistTests(TestCase):
