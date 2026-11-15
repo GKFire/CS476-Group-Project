@@ -17,5 +17,8 @@
     {% endif %}
   </form>
 {% endif %}
+{% if not is_lender and req.status == "CD" %}
+  <p><a href="{% url 'rate-item' req.item.pk %}">Rate this item</a></p>
+{% endif %}
 <p><a href="{% url 'myprofile-requests' %}">Back to requests</a></p>
 {% endblock %}

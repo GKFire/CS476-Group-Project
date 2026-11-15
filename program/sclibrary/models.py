@@ -1,6 +1,7 @@
 from __future__ import annotations
 from django.db import models
 from django.urls import reverse
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from random import randrange
 from abc import ABC, abstractmethod
@@ -170,6 +171,14 @@ class Item(models.Model):
 
     def get_item_type_display(self):
         return Item.Types(self.item_type).label
+
+    def get_average_rating(self):
+        """Average star rating rounded to 1 decimal, or None if unrated."""
+        avg = ItemRating.objects.filter(item_id=self.pk).aggregate(avg=models.Avg("stars"))["avg"]
+        return None if avg is None else round(avg, 1)
+
+    def get_rating_count(self) -> int:
+        return ItemRating.objects.filter(item_id=self.pk).count()
 
     def get_item_types_list():
         return list(map(lambda type : Item.Types(type).label, Item.Types))
@@ -436,6 +445,30 @@ class BorrowerWishList(models.Model):
 
     def __str__(self):
         return self.borrower.username + " - " + self.item.title
+
+class ItemRating(models.Model):
+    """A borrower's star rating (and optional review) of an item they have borrowed.
+
+    One rating per borrower per item; re-rating updates the existing one.
+    """
+    borrower = models.ForeignKey(Borrower, on_delete=models.CASCADE)
+    item = models.ForeignKey(Item, on_delete=models.CASCADE)
+    stars = models.PositiveSmallIntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
+    review = models.TextField(blank=True, default="")
+    created = models.DateTimeField(auto_now_add=True)
+    last_modified = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["borrower", "item"], name="unique_rating_per_borrower_item"),
+        ]
+        ordering = ["-last_modified"]
+
+    def get_stars_display(self) -> str:
+        return "\u2605" * self.stars + "\u2606" * (5 - self.stars)
+
+    def __str__(self):
+        return f"{self.item.title} - {self.borrower.username} - {self.stars}/5"
 
 class LenderNotification(models.Model):
     recipient = models.ForeignKey(Lender, on_delete=models.CASCADE)

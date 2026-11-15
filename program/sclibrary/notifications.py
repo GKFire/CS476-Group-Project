@@ -61,3 +61,11 @@ def notify_wishlist_unavailable(wishlist_item: M.Item, user: M.Borrower):
         subject="Wishlist item unavailable",
         description=f"\"{wishlist_item.title}\" is now unavailable!",
     )
+
+
+def notify_lender_new_rating(rating: M.ItemRating):
+    M.LenderNotification.objects.create(
+        recipient=rating.item.library.owner,
+        subject="New item rating",
+        description=f"{rating.borrower.username} rated \"{rating.item.title}\" {rating.stars}/5.",
+    )
