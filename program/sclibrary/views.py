@@ -5,6 +5,7 @@ from django.contrib.auth import update_session_auth_hash
 
 from django.http import HttpRequest, HttpResponse, HttpResponseForbidden
 import sclibrary.models as SCLibraryModels
+from sclibrary import services
 from sclibrary.forms.user import RegisterForm
 from django.contrib.auth import login, logout
 import sclibrary.forms.user as UserForm
@@ -115,11 +116,7 @@ def viewItem(request: HttpRequest, item_pk: int):
         return HttpResponseForbidden("This item has been hidden by it's owner")
 
     borrow_request = SCLibraryModels.BorrowRequest.objects.filter(item=item_pk,status="AC").first()
-    return render(request, "sclibrary/item_view.html", {"item": item, "borrow_request": borrow_request})
-
-@login_required
-def rateItem(request: HttpRequest, item_pk: int):
-    return HttpResponse("Currently cannot rate this item")
+    return render(request, "sclibrary/item_view.html", {"item": item, "borrow_request": borrow_request, "can_rate": services.can_rate(request.user, item)})
 
 @login_required
 def viewBorrow(request: HttpRequest, item_pk: int):

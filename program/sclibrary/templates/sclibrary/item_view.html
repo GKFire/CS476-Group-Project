@@ -14,6 +14,7 @@
         <li><a class="waves-effect waves-light green btn" href="{% url 'myprofile-requests' %}">View Requests for this Item</a></li>
         <li><a class="waves-effect waves-light green btn" href="{% url 'edit-item' item.id %}">Edit Item</a></li>
         <li><a class="waves-effect waves-light green btn" href="{% url 'delete-item' item.id %}">Delete Item</a></li>
+        <li><a class="waves-effect waves-light green btn" href="{% url 'rate-item' item.id %}">View Ratings</a></li>
     {% else %}
         <li><a class="waves-effect waves-light green btn" href="{% url 'search' %}?library={{ item.library.id }}">View Containing Library</a></li>
         <li><a class="waves-effect waves-light green btn" href="{% url 'view-lender' item.library.owner.id %}">View Owner of Item</a></li>
@@ -22,6 +23,7 @@
         {% else%}
             <li><a class="waves-effect waves-light green btn" href="{% url 'create-request' item.id %}">Request Item</a></li>
         {% endif %}
+        <li><a class="waves-effect waves-light green btn" href="{% url 'rate-item' item.id %}">{% if can_rate %}Rate this Item{% else %}View Ratings{% endif %}</a></li>
     {% endif %}
     </ul>
 {% endblock %}
@@ -44,6 +46,9 @@
     <p>Description: {{ item.description }}</p>
     <p>Condition: {{ item.condition }}</p>
     <p>Notes: {{ item.notes }}</p>
+    {% with avg=item.get_average_rating count=item.get_rating_count %}
+    <p>Rating: {% if avg != None %}{{ avg }} / 5 ({{ count }} rating{{ count|pluralize }}){% else %}No ratings yet{% endif %} &middot; <a href="{% url 'rate-item' item.id %}">{% if can_rate %}Rate this item{% else %}See reviews{% endif %}</a></p>
+    {% endwith %}
     {% if request.user.user_type == "LENDER" %}
         <p>Created: {{ item.addedDate }}</p>
         <p>Last Modified: {{ item.lastModified }}</p>

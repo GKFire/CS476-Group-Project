@@ -1,0 +1,55 @@
+{% extends "sclibrary/template_page_overview.html" %}
+
+{% block styling %}
+<style>
+  .sc-stars { color: #f9a825; letter-spacing: 2px; font-size: 1.2rem; }
+  .sc-review { margin-bottom: 14px; padding-bottom: 8px; border-bottom: 1px solid #80cbc4; }
+  .sc-review-meta { color: #1d3f3c; font-size: 0.85rem; }
+  .sc-msg { padding: 8px 12px; margin-bottom: 12px; background: #e0f2f1; border-left: 4px solid #00796b; }
+</style>
+{% endblock %}
+
+{% block navigation %}
+<ul class="options-list">
+    <li><a class="waves-effect waves-light green btn" href="{% url 'view-item' item.id %}">Back to Item</a></li>
+</ul>
+{% endblock %}
+
+{% block content %}
+<h4>Ratings &amp; Reviews</h4>
+<h5>{{ item.title }}</h5>
+
+{% for m in messages %}<div class="sc-msg">{{ m }}</div>{% endfor %}
+
+{% with avg=item.get_average_rating count=item.get_rating_count %}
+    {% if avg != None %}
+        <p><strong>Average: {{ avg }} / 5</strong> ({{ count }} rating{{ count|pluralize }})</p>
+    {% else %}
+        <p>No ratings yet.</p>
+    {% endif %}
+{% endwith %}
+
+{% if is_borrower %}
+    {% if can_rate or form.non_field_errors %}
+        <h5>{% if existing %}Update your rating{% else %}Rate this item{% endif %}</h5>
+        <form method="post" class="sc-form">
+            {% csrf_token %}
+            {% include "sclibrary/_form_fields.html" %}
+            <button type="submit" class="btn red lighten-2">{% if existing %}Update rating{% else %}Submit rating{% endif %}</button>
+        </form>
+    {% else %}
+        <p>You can only rate items that you have borrowed and returned.</p>
+    {% endif %}
+{% endif %}
+
+<h5>Reviews</h5>
+{% for rating in ratings %}
+    <div class="sc-review">
+        <span class="sc-stars">{{ rating.get_stars_display }}</span>
+        <div class="sc-review-meta">{{ rating.borrower.username }} &middot; {{ rating.last_modified|date:"M j, Y" }}</div>
+        {% if rating.review %}<p>{{ rating.review|linebreaksbr }}</p>{% endif %}
+    </div>
+{% empty %}
+    <p>Nobody has reviewed this item yet.</p>
+{% endfor %}
+{% endblock %}

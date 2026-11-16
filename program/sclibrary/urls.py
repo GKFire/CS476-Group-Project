@@ -1,7 +1,7 @@
 from django.urls import path
 from django.contrib.auth.views import LoginView
 import sclibrary.views as views
-from .subviews import borrower_views, lender_views, request_views, wishlist_views
+from .subviews import borrower_views, lender_views, request_views, wishlist_views, rating_views
 
 urlpatterns = [
     path("", views.index, name="index"), # only seen by new users
@@ -23,7 +23,7 @@ urlpatterns = [
     path("item/create/", lender_views.create_item, name="create-item"), # lender only
     path("item/<int:item_pk>/edit/", lender_views.edit_item, name="edit-item"), # lender only
     path("item/<int:item_pk>/delete/", lender_views.delete_item, name="delete-item"), # lender only
-    path("item/<int:item_pk>/rate/", views.rateItem, name="rate-item"), # borrower can append, lender can only view
+    path("item/<int:item_pk>/rate/", rating_views.rate_item, name="rate-item"), # borrower can append, lender can only view
     
     path("item/<int:item_pk>/requests/create/", borrower_views.send_borrow_request, name="create-request"), # borrower only
     path("request/<int:request_pk>/", request_views.request_detail, name="view-request"), # both borrower and lender can update (submit revision)

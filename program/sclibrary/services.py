@@ -86,3 +86,35 @@ def set_item_visibility(item: M.Item, visible: bool):
         raise ValidationError("You cannot hide an item while it is currently on loan.")
     item.is_visible = visible
     item.save()
+
+
+# ---------------------------------------------------------------------------
+# Item ratings (dopedgod)
+# ---------------------------------------------------------------------------
+
+def has_returned_loan(borrower: M.Borrower, item: M.Item) -> bool:
+    """True if the borrower has borrowed this item and it has been marked returned."""
+    return M.BorrowRequest.objects.filter(borrower_id=borrower.pk, item_id=item.pk, status="CD").exists()
+
+
+def can_rate(user, item: M.Item) -> bool:
+    """Only borrowers who have borrowed and returned the item may rate it."""
+    if user.user_type != M.UserAccount.Types.BORROWER:
+        return False
+    return has_returned_loan(user, item)
+
+
+@transaction.atomic
+def rate_item(borrower: M.Borrower, item: M.Item, stars: int, review: str = "") -> M.ItemRating:
+    """Create or update the borrower's rating for an item. Notifies the lender on a new rating."""
+    if not has_returned_loan(borrower, item):
+        raise ValidationError("You can only rate items that you have borrowed and returned.")
+    if not isinstance(stars, int) or not 1 <= stars <= 5:
+        raise ValidationError("A rating must be between 1 and 5 stars.")
+    rating, created = M.ItemRating.objects.update_or_create(
+        borrower_id=borrower.pk, item_id=item.pk,
+        defaults={"stars": stars, "review": (review or "").strip()},
+    )
+    if created:
+        notifications.notify_lender_new_rating(rating)
+    return rating
