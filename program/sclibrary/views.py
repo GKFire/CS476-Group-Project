@@ -5,7 +5,7 @@ from django.contrib.auth import update_session_auth_hash
 
 from django.http import HttpRequest, HttpResponse, HttpResponseForbidden
 import sclibrary.models as SCLibraryModels
-from sclibrary import services
+from sclibrary import services, notifications as notifications
 from sclibrary.forms.user import RegisterForm
 from django.contrib.auth import login, logout
 import sclibrary.forms.user as UserForm
@@ -56,6 +56,7 @@ def change_username(request: HttpRequest):
             newUsername = form.cleaned_data["newUsername1"]
             request.user.username = newUsername
             request.user.save()
+            notifications.notify_username_change(request.user)
             return redirect("home")
     else:
         form = UserForm.ChangeUsername()
@@ -74,6 +75,7 @@ def change_password(request: HttpRequest):
             
             request.user.set_password(new_password)
             request.user.save()
+            notifications.notify_password_change(request.user)
             update_session_auth_hash(request, request.user)
 
             return redirect("home")
@@ -94,6 +96,7 @@ def change_email(request: HttpRequest):
             
             request.user.email = form.cleaned_data["newEmail1"]
             request.user.save()
+            notifications.notify_email_change(request.user)
             return redirect("home")
     else:
         form = UserForm.ChangeEmail()

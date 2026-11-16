@@ -14,7 +14,7 @@ class BorrowRequestForm(forms.Form):
         start, ret = cleaned.get("start_date"), cleaned.get("return_date")
         today = timezone.localdate()
         if start and start < today:
-            self.add_error("start_date", "The earliest date cannot be in the past.")
+            self.add_error("start_date", "The earliestdate cannot be in the past.")
         if ret and ret < today:
             self.add_error("return_date", "The latest date cannot be in the past.")
         if start and ret:

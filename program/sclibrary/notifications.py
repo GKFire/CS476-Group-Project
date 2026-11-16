@@ -1,4 +1,6 @@
 """Helpers for creating notifications so views never build them by hand."""
+from urllib import request
+
 import sclibrary.models as M
 
 
@@ -68,4 +70,28 @@ def notify_lender_new_rating(rating: M.ItemRating):
         recipient=rating.item.library.owner,
         subject="New item rating",
         description=f"{rating.borrower.username} rated \"{rating.item.title}\" {rating.stars}/5.",
+    )
+
+def notify_username_change(user: M.Lender | M.Borrower):
+    """Notify the user that their username has been changed."""
+    M.UserNotification.objects.create(
+        recipient=user,
+        subject="Username changed",                 
+        description=f"Your username has been changed to \"{user.username}\".",
+    )
+
+def notify_password_change(user: M.Lender | M.Borrower):
+    """Notify the user that their password has been changed."""
+    M.UserNotification.objects.create(
+        recipient=user,
+        subject="Password changed",
+        description=f"Your password has been changed.",
+    )
+
+def notify_email_change(user: M.Lender | M.Borrower):
+    """Notify the user that their email has been changed."""
+    M.UserNotification.objects.create(
+        recipient=user,
+        subject="Email changed",
+        description=f"Your email has been changed to \"{user.email}\".",
     )

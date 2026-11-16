@@ -490,6 +490,16 @@ class BorrowerNotification(models.Model):
     def __str__(self):
         return self.subject + " - " + self.recipient.username
 
+class UserNotification(models.Model):
+    recipient = models.ForeignKey(UserAccount, on_delete=models.CASCADE)
+    subject = models.CharField(max_length=127)
+    description = models.TextField()
+    has_viewed = models.BooleanField(default=False)
+    timestamp = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.subject + " - " + self.recipient.username
+
 """
 
 OBSERVER DESIGN PATTERN BELOW
