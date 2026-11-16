@@ -32,7 +32,7 @@ class BorrowerProfileTests(TestCase):
         loan_1 = self.create_loan("AC")
         loan_2 = self.create_loan("AC")
 
-        response = self.client.get(self.url, headers={"status": "AC"})
+        response = self.client.get(self.url, {"status": "AC"})
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context["requests"].count(), 2)
@@ -43,7 +43,7 @@ class BorrowerProfileTests(TestCase):
     def test_borrowing_history(self):
         loan = self.create_loan("CD")
 
-        response = self.client.get(self.url, query_params={"status": "CD"})
+        response = self.client.get(self.url, {"status": "CD"})
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.context["requests"].count(), 1)
@@ -53,17 +53,17 @@ class BorrowerProfileTests(TestCase):
         loan_1 = self.create_loan("RQ")
         loan_2 = self.create_loan("RJ")
 
-        response_active = self.client.get(self.url, query_params={"status": "AC"})
+        response_active = self.client.get(self.url, {"status": "AC"})
         self.assertEqual(response_active.context["requests"].count(), 0)
 
-        response_concluded = self.client.get(self.url, query_params={"status": "CD"})
+        response_concluded = self.client.get(self.url, {"status": "CD"})
         self.assertEqual(response_concluded.context["requests"].count(), 0)
 
-        response_requested = self.client.get(self.url, query_params={"status": "RQ"})
+        response_requested = self.client.get(self.url, {"status": "RQ"})
         self.assertEqual(response_requested.context["requests"].count(), 1)
         self.assertEqual(response_requested.context["requests"].first(), loan_1)
 
-        response_rejected = self.client.get(self.url, query_params={"status": "RJ"})
+        response_rejected = self.client.get(self.url, {"status": "RJ"})
         self.assertEqual(response_rejected.context["requests"].count(), 1)
         self.assertEqual(response_rejected.context["requests"].first(), loan_2)
 
@@ -74,23 +74,23 @@ class BorrowerProfileTests(TestCase):
         self.create_loan("AC")
         self.create_loan("AC", self.other_borrower, other_item)
 
-        response = self.client.get(self.url, query_params={"status": "AC"})
+        response = self.client.get(self.url, {"status": "AC"})
 
         self.assertContains(response, "Mario Kart")
         self.assertNotContains(response, "Minecraft")
         self.assertEqual(response.context["requests"].count(), 1)
 
     def test_empty_profile(self):
-        response = self.client.get(self.url, query_params={"status": "RQ"})
+        response = self.client.get(self.url, {"status": "RQ"})
         self.assertContains(response, "No requests.")
 
-        response = self.client.get(self.url, query_params={"status": "AC"})
+        response = self.client.get(self.url, {"status": "AC"})
         self.assertContains(response, "No requests.")
 
-        response = self.client.get(self.url, query_params={"status": "CD"})
+        response = self.client.get(self.url, {"status": "CD"})
         self.assertContains(response, "No requests.")
 
-        response = self.client.get(self.url, query_params={"status": "RJ"})
+        response = self.client.get(self.url, {"status": "RJ"})
         self.assertContains(response, "No requests.")
 
     def test_lender_profile_unchanged(self):
