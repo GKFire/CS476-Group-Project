@@ -2,6 +2,8 @@ from django import forms
 
 from django.http import JsonResponse
 from django.urls import reverse_lazy
+from django.contrib import messages
+from django.shortcuts import redirect
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
 import sclibrary.models as SCLibraryModels
@@ -98,7 +100,19 @@ class CreateBookItem(CreateItem):
             notes=data["notes"],
             item_type=SCLibraryModels.Item.Types.BOOK)
 
-class EditItem(LoginRequiredMixin, UpdateView):
+class OnLoanProtectionMixin:
+    """Robustness (Smit): a lender cannot hide an item while it is being borrowed.
+    The visibility toggle already checks this; the edit forms did not."""
+    on_loan_hide_error = "You cannot hide this item while it is being borrowed. Wait until it has been returned."
+
+    def form_valid(self, form):
+        from sclibrary import services  # local import avoids a circular import
+        if not form.cleaned_data.get("is_visible", True) and services.item_is_on_loan(self.object):
+            form.add_error("is_visible", self.on_loan_hide_error)
+            return self.form_invalid(form)
+        return super().form_valid(form)
+
+class EditItem(LoginRequiredMixin, OnLoanProtectionMixin, UpdateView):
     model = SCLibraryModels.Item
     fields = ["condition", "description", "notes", "is_visible"]
 
@@ -108,7 +122,7 @@ class EditItem(LoginRequiredMixin, UpdateView):
         )
 
 
-class EditVideoGameItem(LoginRequiredMixin, UpdateView):
+class EditVideoGameItem(LoginRequiredMixin, OnLoanProtectionMixin, UpdateView):
     model = SCLibraryModels.VideoGame
     fields = ["condition", "description", "notes", "item_format", "age_rating", "is_visible"]
     template_name="sclibrary/item_form.html"
@@ -118,7 +132,7 @@ class EditVideoGameItem(LoginRequiredMixin, UpdateView):
             library__owner_id=self.request.user.pk
         )
 
-class EditMovieItem(LoginRequiredMixin, UpdateView):
+class EditMovieItem(LoginRequiredMixin, OnLoanProtectionMixin, UpdateView):
     model = SCLibraryModels.Movie
     fields = ["condition", "description", "notes", "item_format", "age_rating", "is_visible"]
     template_name="sclibrary/item_form.html"
@@ -128,7 +142,7 @@ class EditMovieItem(LoginRequiredMixin, UpdateView):
             library__owner_id=self.request.user.pk
         )
 
-class EditMusicItem(LoginRequiredMixin, UpdateView):
+class EditMusicItem(LoginRequiredMixin, OnLoanProtectionMixin, UpdateView):
     model = SCLibraryModels.Music
     fields = ["condition", "description", "notes", "item_format", "age_rating", "is_visible"]
     template_name="sclibrary/item_form.html"
@@ -138,7 +152,7 @@ class EditMusicItem(LoginRequiredMixin, UpdateView):
             library__owner_id=self.request.user.pk
         )
 
-class EditBookItem(LoginRequiredMixin, UpdateView):
+class EditBookItem(LoginRequiredMixin, OnLoanProtectionMixin, UpdateView):
     model = SCLibraryModels.Book
     fields = ["condition", "description", "notes", "item_format", "age_rating", "is_visible"]
     template_name="sclibrary/item_form.html"
@@ -151,6 +165,14 @@ class EditBookItem(LoginRequiredMixin, UpdateView):
 class DeleteItem(LoginRequiredMixin, DeleteView):
     model = SCLibraryModels.Item
     success_url = reverse_lazy("home")
+
+    def form_valid(self, form):
+        """Robustness (Smit): a lender cannot delete an item while it is being borrowed."""
+        from sclibrary import services
+        if services.item_is_on_loan(self.object):
+            messages.error(self.request, "You cannot delete this item while it is being borrowed. Wait until it has been returned.")
+            return redirect("view-item", item_pk=self.object.pk)
+        return super().form_valid(form)
 
     def get_queryset(self):
         return SCLibraryModels.Item.objects.filter(
