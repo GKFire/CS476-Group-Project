@@ -1,5 +1,5 @@
 from django.urls import path
-from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import LoginView, PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView
 import sclibrary.views as views
 from .subviews import borrower_views, lender_views, request_views, wishlist_views, rating_views
 
@@ -9,6 +9,13 @@ urlpatterns = [
     path("logout/", views.logout_view, name="logout"),
     path("register/", views.register, name="register"),
     path("home/", views.home, name="home"), # default for logged-in users
+
+    # URLS for forgot password feature using built-in Django views
+    path("reset-password/", PasswordResetView.as_view(template_name="sclibrary/page_reset_password.html", html_email_template_name="sclibrary/reset_password_email.html"), name="reset-password"),
+    path("reset-password/done/", PasswordResetDoneView.as_view(template_name="sclibrary/page_reset_password_done.html"), name="password_reset_done"),
+    path("reset-password-confirm/<uidb64>/<token>/", PasswordResetConfirmView.as_view(template_name="sclibrary/page_reset_password_confirm.html"), name="password_reset_confirm"),
+    path("reset-password-complete/", PasswordResetCompleteView.as_view(template_name="sclibrary/page_reset_password_complete.html"), name="password_reset_complete"),
+
     path("changeinfo/", views.change_info, name="change-info"),
     path("changeinfo/username/", views.change_username, name="change-username"),
     path("changeinfo/password/", views.change_password, name="change-password"),
