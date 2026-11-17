@@ -105,7 +105,7 @@ class SendBorrowRequestTests(TestCase):
     def test_past_and_reversed_dates_rejected(self):
         self.client.login(username="bob", password="pw12345!")
         self.assertContains(self.send(start=date.today() - timedelta(days=1)), "cannot be in the past")
-        self.assertContains(self.send(ret=self.start), "The latest date must be after the earliest date.")
+        self.assertContains(self.send(ret=self.start), "The return date must be after the start date.")
         self.assertFalse(M.BorrowRequest.objects.exists())
 
 
@@ -122,12 +122,12 @@ class ItemFormRenderTests(TestCase):
     def test_add_item_form_uses_visible_fields_and_submits(self):
         lender = make_lender()
         self.client.login(username="lena", password="pw12345!")
-        page = self.client.get(reverse("create-item"), query_params={"type": "videogame"})
+        page = self.client.get(reverse("create-item"), {"type": "videogame"})
         self.assertContains(page, 'class="sc-form"')
         self.assertContains(page, "<select")
         data = {"title": "Zelda", "release": "2020-01-01", "producer": "Nintendo", "condition": "Good",
                 "description": "d", "notes": "n", "item_format": "NS", "age_rating": "E"}
-        r = self.client.post(reverse("create-item"), data)
+        r = self.client.post(reverse("create-item") + "?type=videogame", data)
         item = M.Item.objects.get(title="Zelda", library=lender.library)
         self.assertRedirects(r, reverse("view-item", args=[item.pk]), fetch_redirect_response=False)
 
