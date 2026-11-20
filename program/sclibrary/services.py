@@ -53,6 +53,7 @@ def accept_request(req: M.BorrowRequest, return_date=None) -> M.BorrowRequest:
         other.save()
         notifications.notify_borrower_decision(other, accepted=False)
     notifications.notify_borrower_decision(req, accepted=True)
+    notify_wishlist_observers(req.item, exclude=req.borrower)
     return req
 
 
@@ -73,7 +74,26 @@ def mark_returned(req: M.BorrowRequest) -> M.BorrowRequest:
     req.status = "CD"
     req.save()
     notifications.notify_borrower_returned(req)
+    notify_wishlist_observers(req.item, exclude=req.borrower)
     return req
+
+
+# ---------------------------------------------------------------------------
+# Observer pattern (Smit): borrowers who wishlisted an item observe its
+# availability. Uses the Subject/Observer classes in models.py.
+# ---------------------------------------------------------------------------
+
+def notify_wishlist_observers(item: M.Item, exclude: M.Borrower | None = None):
+    """Attach every borrower who has this item on their wishlist as an observer,
+    then notify them that the item is now borrowed or available again."""
+    if not item.is_visible:
+        return
+    subject = M.ConcreteSubject(item)
+    for entry in M.BorrowerWishList.objects.filter(item=item).select_related("borrower"):
+        if exclude is not None and entry.borrower_id == exclude.pk:
+            continue
+        subject.attach(M.ConcreteObserver(entry.borrower))
+    subject.notify()
 
 
 def overdue_requests():
