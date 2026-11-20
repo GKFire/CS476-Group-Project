@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
+import os
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -20,12 +21,26 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-aw5z2g+(-usow+9*7@2lq6@y*eys)%903p2$2lu_v0jb)ezui2'
+# Deployment (Smit): on the live server these come from environment variables,
+# set in the PythonAnywhere WSGI file. Locally nothing needs to be set and the
+# defaults below keep the development behaviour (DEBUG on, localhost only).
+SECRET_KEY = os.environ.get(
+    "DJANGO_SECRET_KEY",
+    'django-insecure-aw5z2g+(-usow+9*7@2lq6@y*eys)%903p2$2lu_v0jb)ezui2',
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get("DJANGO_DEBUG", "True") == "True"
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["localhost", "127.0.0.1"] + [
+    host.strip() for host in os.environ.get("DJANGO_ALLOWED_HOSTS", "").split(",") if host.strip()
+]
+CSRF_TRUSTED_ORIGINS = ["https://" + host for host in ALLOWED_HOSTS if host not in ("localhost", "127.0.0.1")]
+
+if not DEBUG:
+    # Live site only: send login and CSRF cookies over HTTPS only
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
 
 
 # Application definition
@@ -111,7 +126,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'Canada/Saskatchewan'
+TIME_ZONE = 'America/Regina'  # same zone; 'Canada/Saskatchewan' is a legacy alias missing on some servers
 
 USE_I18N = True
 
@@ -122,6 +137,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
+# Where collectstatic gathers CSS/JS for the live server (served by PythonAnywhere's static files mapping)
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -137,6 +154,8 @@ EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
 
 EMAIL_HOST_USER = 'sclibrary392@gmail.com'
-EMAIL_HOST_PASSWORD = 'wpbrhpqgxctpajau'
+# Read from the environment so the password is never committed to GitHub.
+# Locally: set EMAIL_HOST_PASSWORD before runserver. Live: set it in the PythonAnywhere WSGI file.
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_HOST_PASSWORD", "")
 
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
