@@ -163,6 +163,11 @@ class Item(models.Model):
     def __str__(self):
         return self.library.name + " - " + self.title
 
+    @property
+    def is_borrowed(self) -> bool:
+        """True while the item has an active loan. Used by the wishlist Observer (Smit)."""
+        return self.borrowrequest_set.filter(status="AC").exists()
+
     def get_icon_name(self) -> str:
         return "collections"
 
