@@ -118,13 +118,6 @@ def change_email(request: HttpRequest):
     return render(request, "sclibrary/page_change_email.html", {"form": form})
 
 @login_required
-def myprofileRequests(request: HttpRequest):
-    if (request.user.user_type == USER_TYPES.LENDER):
-        return HttpResponse(request.user.lender.library)
-    elif (request.user.user_type == USER_TYPES.BORROWER):
-        return HttpResponse("Placeholder")
-
-@login_required
 def viewItem(request: HttpRequest, item_pk: int):
     item = get_object_or_404(SCLibraryModels.Item, pk=item_pk)
 
@@ -135,14 +128,6 @@ def viewItem(request: HttpRequest, item_pk: int):
 
     borrow_request = SCLibraryModels.BorrowRequest.objects.filter(item=item_pk,status="AC").first()
     return render(request, "sclibrary/item_view.html", {"item": item, "borrow_request": borrow_request, "can_rate": services.can_rate(request.user, item)})
-
-@login_required
-def viewBorrow(request: HttpRequest, item_pk: int):
-    item = SCLibraryModels.Item.objects.filter(id=item_pk).first()
-    if (item == None):
-        return HttpResponse("Item does not exist")
-    item_requests = item.borrowrequest_set.all().values()
-    return HttpResponse(item_requests)
 
 @login_required
 def viewWishlist(request: HttpRequest):

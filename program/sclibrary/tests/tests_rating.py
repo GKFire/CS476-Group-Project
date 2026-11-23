@@ -50,9 +50,9 @@ class RatingServiceTests(TestCase):
 
     def test_new_rating_notifies_lender(self):
         borrow(self.borrower, self.item)
-        before = M.LenderNotification.objects.filter(recipient=self.lender).count()
+        before = M.UserNotification.objects.filter(recipient=self.lender).count()
         services.rate_item(self.borrower, self.item, 5)
-        notes = M.LenderNotification.objects.filter(recipient=self.lender)
+        notes = M.UserNotification.objects.filter(recipient=self.lender)
         self.assertEqual(notes.count(), before + 1)
         self.assertTrue(notes.filter(subject="New item rating").exists())
 
@@ -93,7 +93,7 @@ class RatingServiceTests(TestCase):
         rating = M.ItemRating.objects.get()
         self.assertEqual((rating.stars, rating.review), (5, "grew on me"))
         # only the first rating notifies the lender
-        self.assertEqual(M.LenderNotification.objects.filter(subject="New item rating").count(), 1)
+        self.assertEqual(M.UserNotification.objects.filter(subject="New item rating").count(), 1)
 
     def test_lender_cannot_rate(self):
         self.assertFalse(services.can_rate(self.lender, self.item))

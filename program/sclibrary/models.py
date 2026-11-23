@@ -427,22 +427,6 @@ class BorrowRequest(models.Model):
     def __str__(self):
         return self.status + " - " + self.item.title + " - " + self.borrower.username
 
-class LenderMessage(models.Model):
-    request = models.ForeignKey(BorrowRequest, on_delete=models.CASCADE)
-    message = models.TextField()
-    timestamp = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.request.item.title + " - " + self.timestamp
-
-class BorrowerMessage(models.Model):
-    request = models.ForeignKey(BorrowRequest, on_delete=models.CASCADE)
-    message = models.TextField()
-    timestamp = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.request.item.title + " - " + self.timestamp
-
 class BorrowerWishList(models.Model):
     borrower = models.ForeignKey(Borrower, on_delete=models.CASCADE)
     item = models.ForeignKey(Item, on_delete=models.CASCADE)
@@ -474,26 +458,6 @@ class ItemRating(models.Model):
 
     def __str__(self):
         return f"{self.item.title} - {self.borrower.username} - {self.stars}/5"
-
-class LenderNotification(models.Model):
-    recipient = models.ForeignKey(Lender, on_delete=models.CASCADE)
-    subject = models.CharField(max_length=127)
-    description = models.TextField()
-    has_viewed = models.BooleanField(default=False)
-    timestamp = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.subject + " - " + self.recipient.username
-
-class BorrowerNotification(models.Model):
-    recipient = models.ForeignKey(Borrower, on_delete=models.CASCADE)
-    subject = models.CharField(max_length=127)
-    description = models.TextField()
-    has_viewed = models.BooleanField(default=False)
-    timestamp = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return self.subject + " - " + self.recipient.username
 
 class UserNotification(models.Model):
     recipient = models.ForeignKey(UserAccount, on_delete=models.CASCADE)
