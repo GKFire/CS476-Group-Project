@@ -2,9 +2,14 @@ import sclibrary.models as SCLibraryModels
 import sclibrary.forms.items as ItemForms
 
 
-class AbstractItemFactory:
+class ItemFactory():
     default_class = SCLibraryModels.Item
-    instances = []
+    instances = [
+        (SCLibraryModels.Item.Types.VIDEOGAME, (SCLibraryModels.VideoGame, ItemForms.CreateVideoGameItem, ItemForms.EditVideoGameItem)),
+        (SCLibraryModels.Item.Types.MOVIE, (SCLibraryModels.Movie, ItemForms.CreateMovieItem, ItemForms.EditMovieItem)),
+        (SCLibraryModels.Item.Types.MUSIC, (SCLibraryModels.Music, ItemForms.CreateMusicItem, ItemForms.EditMusicItem)),
+        (SCLibraryModels.Item.Types.BOOK, (SCLibraryModels.Book, ItemForms.CreateBookItem, ItemForms.EditBookItem))
+    ]
 
     def appendItemInstance(self, typename: str, classdef):
         typename = typename.upper()
@@ -40,15 +45,3 @@ class AbstractItemFactory:
 
     def getProperItems(self, items):
         return list(map(lambda item: self.getItemMethods(item.item_type)[0].objects.get(id=item.id), items))
-
-
-
-class ItemFactory(AbstractItemFactory):
-
-    def __init__(self):
-        self.instances = [
-            (SCLibraryModels.Item.Types.VIDEOGAME, (SCLibraryModels.VideoGame, ItemForms.CreateVideoGameItem, ItemForms.EditVideoGameItem)),
-            (SCLibraryModels.Item.Types.MOVIE, (SCLibraryModels.Movie, ItemForms.CreateMovieItem, ItemForms.EditMovieItem)),
-            (SCLibraryModels.Item.Types.MUSIC, (SCLibraryModels.Music, ItemForms.CreateMusicItem, ItemForms.EditMusicItem)),
-            (SCLibraryModels.Item.Types.BOOK, (SCLibraryModels.Book, ItemForms.CreateBookItem, ItemForms.EditBookItem))
-        ]

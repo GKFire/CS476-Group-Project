@@ -109,19 +109,12 @@ def toggle_item_visibility(request: HttpRequest, item_pk: int):
 
 
 def _notif_qs(user):
-    if user.user_type == LENDER:
-        return M.LenderNotification.objects.filter(recipient_id=user.pk)
-    if user.user_type == BORROWER:
-        return M.BorrowerNotification.objects.filter(recipient_id=user.pk)
-    return None
+    return M.UserNotification.objects.filter(recipient_id=user.pk)
 
 
 @login_required
 def notifications_list(request: HttpRequest):
-    qs = _notif_qs(request.user)
-    if qs is None:
-        return _forbidden()
-    return render(request, "sclibrary/notifications.html", {"notifications": qs.order_by("-timestamp")})
+    return render(request, "sclibrary/notifications.html", {"notifications": _notif_qs(request.user).order_by("-timestamp")})
 
 
 @login_required
