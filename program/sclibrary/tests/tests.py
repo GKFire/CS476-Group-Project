@@ -55,7 +55,7 @@ class RequestServiceTests(TestCase):
 
     def test_create_notifies_lender(self):
         self._req()
-        self.assertEqual(M.LenderNotification.objects.filter(recipient=self.lender).count(), 1)
+        self.assertEqual(M.UserNotification.objects.filter(recipient=self.lender).count(), 1)
 
     def test_return_date_before_start_rejected(self):
         with self.assertRaises(ValidationError):
@@ -64,7 +64,7 @@ class RequestServiceTests(TestCase):
     def test_accept_sets_active_and_notifies_borrower(self):
         req = services.accept_request(self._req())
         self.assertEqual(req.status, "AC")
-        self.assertEqual(M.BorrowerNotification.objects.filter(recipient=self.borrower).count(), 1)
+        self.assertEqual(M.UserNotification.objects.filter(recipient=self.borrower).count(), 1)
 
     def test_accept_can_change_return_date_but_not_before_start(self):
         req = self._req()
@@ -107,8 +107,8 @@ class RequestServiceTests(TestCase):
             self.borrower, self.item, self.today - timedelta(days=10), self.today - timedelta(days=1)))
         call_command("send_overdue_notifications")
         self.assertIn(req.pk, services.overdue_requests().values_list("pk", flat=True))
-        self.assertTrue(M.LenderNotification.objects.filter(subject="Item overdue").exists())
-        self.assertTrue(M.BorrowerNotification.objects.filter(subject="Item overdue").exists())
+        self.assertTrue(M.UserNotification.objects.filter(subject="Item overdue").exists())
+        self.assertTrue(M.UserNotification.objects.filter(subject="Item overdue").exists())
 
 
 class RequestViewTests(TestCase):
@@ -150,7 +150,7 @@ class RequestViewTests(TestCase):
         self.client.force_login(self.lender)
         self.assertContains(self.client.get(reverse("view-notifications")), "New borrow request")
         self.client.post(reverse("notifications-mark-read"))
-        self.assertFalse(M.LenderNotification.objects.filter(has_viewed=False).exists())
+        self.assertFalse(M.UserNotification.objects.filter(has_viewed=False).exists())
 
     def test_toggle_visibility_owner_only(self):
         self.client.force_login(self.other_lender)

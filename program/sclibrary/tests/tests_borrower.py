@@ -78,7 +78,7 @@ class SendBorrowRequestTests(TestCase):
         self.assertRedirects(r, reverse("myprofile-requests"), fetch_redirect_response=False)
         req = M.BorrowRequest.objects.get()
         self.assertEqual((req.status, req.borrower_id, req.item_id), ("RQ", self.borrower.pk, self.item.pk))
-        self.assertTrue(M.LenderNotification.objects.filter(recipient=self.lender).exists())
+        self.assertTrue(M.UserNotification.objects.filter(recipient=self.lender).exists())
 
     def test_lender_cannot_send_request(self):
         self.client.login(username="lena", password="pw12345!")

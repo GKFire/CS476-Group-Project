@@ -21,7 +21,7 @@ class WishlistObserverTests(TestCase):
             self.requester, self.item, date.today() + timedelta(days=1), date.today() + timedelta(days=14))
 
     def subjects(self, borrower):
-        return list(M.BorrowerNotification.objects.filter(recipient=borrower).values_list("subject", flat=True))
+        return list(M.UserNotification.objects.filter(recipient=borrower).values_list("subject", flat=True))
 
     def test_item_is_borrowed_property(self):
         self.assertFalse(self.item.is_borrowed)
