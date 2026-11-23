@@ -2,6 +2,7 @@
 from urllib import request
 
 import sclibrary.models as M
+import sclibrary.views as V
 
 
 def notify_lender_new_request(req: M.BorrowRequest):
@@ -79,6 +80,12 @@ def notify_username_change(user: M.Lender | M.Borrower):
         subject="Username changed",                 
         description=f"Your username has been changed to \"{user.username}\".",
     )
+    V.send_email(
+        subject="Username changed",
+        recipient=user.email,
+        template="sclibrary/change_username_email.html",
+        context={"user": user},
+    )
 
 def notify_password_change(user: M.Lender | M.Borrower):
     """Notify the user that their password has been changed."""
@@ -87,6 +94,12 @@ def notify_password_change(user: M.Lender | M.Borrower):
         subject="Password changed",
         description=f"Your password has been changed.",
     )
+    V.send_email(
+        subject="Password changed",
+        recipient=user.email,
+        template="sclibrary/change_password_email.html",
+        context={"user": user},
+    )
 
 def notify_email_change(user: M.Lender | M.Borrower):
     """Notify the user that their email has been changed."""
@@ -94,4 +107,10 @@ def notify_email_change(user: M.Lender | M.Borrower):
         recipient=user,
         subject="Email changed",
         description=f"Your email has been changed to \"{user.email}\".",
+    )
+    V.send_email(
+        subject="Email changed",
+        recipient=user.email,
+        template="sclibrary/change_email_email.html",
+        context={"user": user},
     )

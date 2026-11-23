@@ -10,12 +10,27 @@ from sclibrary.forms.user import RegisterForm
 from django.contrib.auth import login, logout
 import sclibrary.forms.user as UserForm
 
+# Used for sending emails
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from django.conf import settings
+import service.settings as appsettings
+
 from django.apps import apps
 
 USER_TYPES = SCLibraryModels.UserAccount.Types
 sclibraryconfig = apps.get_app_config("sclibrary")
 
 # Create your views here.
+def send_email(subject, recipient, template, context=None):
+    content = render_to_string(template, context or {})
+    return send_mail(
+        subject = subject,
+        message = '',
+        from_email = appsettings.EMAIL_HOST_USER,
+        recipient_list = [recipient],
+        html_message = content,
+    )
 
 def index(request: HttpRequest):
     libraries = SCLibraryModels.Library.objects.all()
