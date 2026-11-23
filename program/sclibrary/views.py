@@ -109,7 +109,7 @@ def change_email(request: HttpRequest):
                 form.add_error("currentEmail", "This is not your current email!")
                 return render(request, "sclibrary/page_change_email.html", {"form": form})
             
-            request.user.email = form.cleaned_data["newEmail1"]
+            request.user.email = new_email
             request.user.save()
             notifications.notify_email_change(request.user)
             return redirect("home")
