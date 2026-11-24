@@ -4,7 +4,7 @@
 <ul class="options-list">
 {% if request.user.user_type == "LENDER" %}
   <li><a class="waves-effect waves-light green btn" href="{% url 'create-item' %}">Create Item</a></li>
-  <li><a class="waves-effect waves-light green btn" href="{% url 'create-item' %}">Edit Library</a></li>
+  <li><a class="waves-effect waves-light green btn" href="{% url 'change-library' %}">Edit Library</a></li>
 {% elif request.user.user_type == "ADMIN" %}
   <li><a class="waves-effect waves-light green btn" href="/admin">Admin Panel</a></li>
 {% endif %}
