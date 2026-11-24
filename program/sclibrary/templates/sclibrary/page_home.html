@@ -8,7 +8,9 @@
 {% elif request.user.user_type == "ADMIN" %}
   <li><a class="waves-effect waves-light green btn" href="/admin">Admin Panel</a></li>
 {% endif %}
-  <li><a class="waves-effect waves-light green btn" href="{% url 'search' %}">Search Catalogue</a></li>
+  {% if request.user.user_type == "BORROWER" %}
+    <li><a class="waves-effect waves-light green btn" href="{% url 'search' %}">Search Catalogue</a></li>
+  {% endif %}
   <li><a class="waves-effect waves-light green btn" href="{% url 'myprofile-requests' %}?status=RQ">View Requests</a></li>
   <li><a class="waves-effect waves-light green btn" href="{% url 'myprofile-requests' %}?status=AC">Ongoing Loans</a></li>
   <li><a class="waves-effect waves-light green btn" href="{% url 'change-info' %}">Change Info</a></li>
