@@ -146,6 +146,57 @@ class RequestViewTests(TestCase):
         self.client.force_login(self.other_lender)
         self.assertNotContains(self.client.get(reverse("myprofile-requests")), "Zelda")
 
+    
+    def test_lender_search_by_item_title(self):
+        other_item = make_item(self.lender, "Mario")
+        services.create_request(self.borrower, other_item, date.today(), date.today() + timedelta(days=3))
+
+        self.client.force_login(self.lender)
+
+        response = self.client.get(reverse("myprofile-requests"), {"q": "zel"})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(list(response.context["requests"]), [self.req])
+
+    def test_lender_search_by_borrower_username(self):
+        other_borrower = make_borrower("alice")
+        services.create_request(other_borrower, self.item,date.today(), date.today() + timedelta(days=3))
+
+        self.client.force_login(self.lender)
+
+        response = self.client.get(reverse("myprofile-requests"), {"q": "bob"})
+
+        self.assertEqual(list(response.context["requests"]), [self.req])
+
+    def test_borrower_search_by_item_title_only(self):
+        self.client.force_login(self.borrower)
+
+        response = self.client.get(reverse("myprofile-requests"), {"q": "Zelda"})
+        self.assertEqual(list(response.context["requests"]), [self.req])
+
+        response = self.client.get(reverse("myprofile-requests"), {"q": "bob"})
+        self.assertEqual(list(response.context["requests"]), [])
+
+    def test_search_and_status_filter_together(self):
+        services.accept_request(self.req)
+        self.client.force_login(self.lender)
+
+        response = self.client.get(reverse("myprofile-requests"), {"q": "Zelda", "status": "AC"})
+        self.assertEqual(list(response.context["requests"]), [self.req])
+
+        response = self.client.get(reverse("myprofile-requests"),{"q": "Zelda", "status": "RQ"})
+        self.assertEqual(list(response.context["requests"]), [])
+
+
+    def test_search_does_not_show_other_borrowers_requests(self):
+        other_borrower = make_borrower("eve")
+        self.client.force_login(other_borrower)
+
+        response = self.client.get(reverse("myprofile-requests"), {"q": "Zelda"})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(list(response.context["requests"]), [])
+
     def test_notifications_page_and_mark_read(self):
         self.client.force_login(self.lender)
         self.assertContains(self.client.get(reverse("view-notifications")), "New borrow request")

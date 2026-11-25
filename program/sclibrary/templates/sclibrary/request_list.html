@@ -1,9 +1,35 @@
 {% extends "sclibrary/base_simple.html" %}
 {% block content %}
 <h4>{% if is_lender %}Requests on my items{% else %}My requests{% endif %}</h4>
+<form method="get" action="{% url 'myprofile-requests' %}">
+    <div class="row">
+        <div class="input-field col s9">
+            <input
+                type="search"
+                name="q"
+                id="request-search"
+                value="{{ search_query }}"
+                placeholder="{% if is_lender %}Search item or borrower{% else %}Search item{% endif %}"
+            >
+        </div>
+
+        <div class="col s3">
+            <button type="submit" class="btn teal">
+                Search
+            </button>
+        </div>
+    </div>
+
+    {% if status == "RQ" or status == "AC" or status == "RJ" or status == "CD" %}
+        <input type="hidden" name="status" value="{{ status }}">
+    {% endif %}
+</form>
 <p>
-  <a href="?">All</a> | <a href="?status=RQ">Pending</a> | <a href="?status=AC">Ongoing loans</a> |
-  <a href="?status=RJ">Declined</a> | <a href="?status=CD">Concluded</a>
+  <a href="?q={{ search_query|urlencode }}">All</a> |
+  <a href="?status=RQ&q={{ search_query|urlencode }}">Pending</a> |
+  <a href="?status=AC&q={{ search_query|urlencode }}">Ongoing loans</a> |
+  <a href="?status=RJ&q={{ search_query|urlencode }}">Declined</a> |
+  <a href="?status=CD&q={{ search_query|urlencode }}">Concluded</a>
 </p>
 <table>
   <tr><th>Item</th>{% if is_lender %}<th>Borrower</th>{% endif %}<th>Start</th><th>Return</th><th>Status</th><th></th></tr>

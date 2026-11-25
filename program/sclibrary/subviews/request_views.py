@@ -3,6 +3,7 @@
 Wire-up (urls.py) is documented in CONTRIBUTION_NOTES.md.
 """
 from django import forms
+from django.db.models import Q
 from django.contrib import messages
 from django.core.exceptions import ValidationError
 from django.http import HttpRequest, HttpResponseForbidden
@@ -45,11 +46,24 @@ def request_list(request: HttpRequest):
         return _forbidden()
     if status in {"RQ", "AC", "RJ", "CD"}:
         qs = qs.filter(status=status)
+    search_query = request.GET.get("q", "").strip()
+
+    if search_query:
+        if request.user.user_type == LENDER:
+            qs = qs.filter(
+                Q(item__title__icontains=search_query) |
+                Q(borrower__username__icontains=search_query)
+            )
+        else:
+            qs = qs.filter(item__title__icontains=search_query)
     qs = qs.select_related("item", "borrower").order_by("-start_date")
     overdue_ids = set(services.overdue_requests().filter(pk__in=qs.values("pk")).values_list("pk", flat=True))
     return render(request, "sclibrary/request_list.html", {
-        "requests": qs, "status": status, "overdue_ids": overdue_ids,
+        "requests": qs,
+        "status": status,
+        "overdue_ids": overdue_ids,
         "is_lender": request.user.user_type == LENDER,
+        "search_query": search_query,
     })
 
 
