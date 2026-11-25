@@ -11,12 +11,12 @@ class ItemFactory():
         (SCLibraryModels.Item.Types.BOOK, (SCLibraryModels.Book, ItemForms.CreateBookItem, ItemForms.EditBookItem))
     ]
 
-    def appendItemInstance(self, typename: str, classdef):
+    def appendItemInstance(self, typename: str, classdef, createView, editView):
         typename = typename.upper()
         for instance in self.instances:
             if instance[0] == typename:
                 return
-        self.instances.append((typename, classdef))
+        self.instances.append((typename, (classdef, createView, editView)))
 
     def removeItemInstance(self, typename: str):
         typename = typename.upper()

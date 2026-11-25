@@ -32,15 +32,9 @@
 {% block content %}
 <div>
     <h3>{{ item.title }}</h3>
-    {% if item.item_type == "VIDEOGAME" %}
-        <p>{{ item.videogame.get_format_display }} -- {{ item.videogame.get_age_display }}</p>
-    {% elif item.item_type == "MOVIE" %}
-        <p>{{ item.movie.get_format_display }} -- {{ item.movie.get_age_display }}</p>
-    {% elif item.item_type == "MUSIC" %}
-        <p>{{ item.music.get_format_display }} -- {{ item.music.get_age_display }}</p>
-    {% elif item.item_type == "BOOK" %}
-        <p>{{ item.book.get_format_display }} -- {{ item.book.get_age_display }}</p>
-    {%endif%}
+    {% if item.item_type != "OTHER" %}
+        <p>{{ item.get_format_display }} -- {{ item.get_age_display }}</p>
+    {% endif %}
     <p>Release: {{ item.release }}</p>
     <p>Producer: {{ item.producer }}</p>
     <p>Description: {{ item.description }}</p>
