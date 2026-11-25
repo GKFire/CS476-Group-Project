@@ -508,15 +508,13 @@ class ConcreteSubject(Subject):
         self.item = item ## Sets the item for the subject
         self._observers: List[Observer] = [] ## Sets the list of observers for the subject, and initializes it to an empty list
 
-    ## Attach function 
+    ## Attach function (adds an observer)
     def attach(self, observer: Observer) -> None:
-        print("Subject: Attached an observer.")
-        self._observers.append(observer)
+        self._observers.append(observer) 
 
-    ## Detach function
+    ## Detach function (removes an observer)
     def detach(self, observer: Observer) -> None:
-        self._observers.remove(observer)
-        print("Subject: Removed an observer.")
+        self._observers.remove(observer) 
 
     """
     The subscription management methods.
@@ -527,7 +525,6 @@ class ConcreteSubject(Subject):
         Trigger an update in each subscriber.
         """
 
-        print("Subject: Notifying observers...")
         for observer in self._observers:
             observer.update(self)
 
@@ -559,12 +556,10 @@ class ConcreteObserver(Observer):
     def update(self, subject: Subject) -> None:
         import sclibrary.notifications as N ## import put here to not create a circular dependency
         if subject.item.is_borrowed:
-            print(f"Observer: {self.borrower.username} has been notified that {subject.item.title} is now borrowed.")
-            N.notify_wishlist_unavailable(subject.item, self.borrower)
+            N.notify_wishlist_unavailable(subject.item, self.borrower)  ## notifies borrower that the wishlist item is unavailble
 
         else:
-            print(f"Observer: {self.borrower.username} has been notified that {subject.item.title} is now available.")
-            N.notify_wishlist_available(subject.item, self.borrower)
+            N.notify_wishlist_available(subject.item, self.borrower) ## notifies borrower that the wishlist item is available
 
 
 
