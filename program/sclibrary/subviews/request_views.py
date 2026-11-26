@@ -52,11 +52,23 @@ def request_list(request: HttpRequest):
         if request.user.user_type == LENDER:
             qs = qs.filter(
                 Q(item__title__icontains=search_query) |
-                Q(borrower__username__icontains=search_query)
-            )
+                Q(borrower__username__icontains=search_query))
         else:
             qs = qs.filter(item__title__icontains=search_query)
-    qs = qs.select_related("item", "borrower").order_by("-start_date")
+ 
+    sort_options = {
+        "newest": ("-start_date", "-pk"),
+        "oldest": ("start_date", "pk"),
+        "return_soon": ("return_date", "pk"),
+        "return_late": ("-return_date", "-pk"),}
+
+    sort = request.GET.get("sort", "newest")
+
+    if sort not in sort_options:
+        sort = "newest"
+
+    qs = qs.select_related("item", "borrower").order_by(*sort_options[sort])
+    
     overdue_ids = set(services.overdue_requests().filter(pk__in=qs.values("pk")).values_list("pk", flat=True))
     return render(request, "sclibrary/request_list.html", {
         "requests": qs,
@@ -64,6 +76,7 @@ def request_list(request: HttpRequest):
         "overdue_ids": overdue_ids,
         "is_lender": request.user.user_type == LENDER,
         "search_query": search_query,
+         "sort": sort,
     })
 
 

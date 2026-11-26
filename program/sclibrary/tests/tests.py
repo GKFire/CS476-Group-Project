@@ -206,3 +206,75 @@ class RequestViewTests(TestCase):
     def test_toggle_visibility_owner_only(self):
         self.client.force_login(self.other_lender)
         self.assertEqual(self.client.post(reverse("toggle-item-visibility", args=[self.item.pk])).status_code, 404)
+
+    def test_sort_by_start_date(self):
+        other_item = make_item(self.lender, "Mario")
+        other_req = services.create_request(self.borrower, other_item, date.today() + timedelta(days=1),
+                                            date.today() + timedelta(days=2))
+
+        self.client.force_login(self.lender)
+        url = reverse("myprofile-requests")
+
+        newest = self.client.get(url, {"sort": "newest"})
+        self.assertEqual(list(newest.context["requests"]), [other_req, self.req])
+
+        oldest = self.client.get(url, {"sort": "oldest"})
+        self.assertEqual(list(oldest.context["requests"]), [self.req, other_req])
+
+    def test_sort_by_return_date(self):
+        other_item = make_item(self.lender, "Mario")
+        other_req = services.create_request(self.borrower, other_item, date.today() + timedelta(days=1),
+                                            date.today() + timedelta(days=2))
+
+        self.client.force_login(self.lender)
+        url = reverse("myprofile-requests")
+
+        earliest = self.client.get(url, {"sort": "return_soon"})
+        self.assertEqual(list(earliest.context["requests"]), [other_req, self.req])
+
+        latest = self.client.get(url, {"sort": "return_late"})
+        self.assertEqual(list(latest.context["requests"]), [self.req, other_req])
+
+    def test_invalid_sort_uses_default(self):
+        self.client.force_login(self.lender)
+
+        response = self.client.get(reverse("myprofile-requests"), {"sort": "invalid_option"})
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.context["sort"], "newest")
+
+
+    def test_search_filter_and_sort_together(self):
+        other_item = make_item(self.lender, "Mario")
+        other_req = services.create_request(self.borrower, other_item, date.today() + timedelta(days=1), 
+                                            date.today() + timedelta(days=2))
+
+        self.client.force_login(self.lender)
+
+        response = self.client.get(
+            reverse("myprofile-requests"),
+            {
+                "q": "Mario",
+                "status": "RQ",
+                "sort": "return_soon"
+            }
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(list(response.context["requests"]), [other_req])
+        self.assertEqual(response.context["sort"], "return_soon")
+
+
+    def test_dashboard_status_and_empty_messages(self):
+        self.client.force_login(self.borrower)
+        url = reverse("myprofile-requests")
+
+        response = self.client.get(url)
+        self.assertContains(response, "Pending")
+
+        response = self.client.get(url, {"q": "nonexistent_item_xyz"} )
+        self.assertContains(response, "No matching requests found.")
+
+        self.client.force_login(self.other_lender)
+        response = self.client.get(url)
+        self.assertContains(response, "No requests yet.")
