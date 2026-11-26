@@ -460,6 +460,7 @@ class ItemRating(models.Model):
         return f"{self.item.title} - {self.borrower.username} - {self.stars}/5"
 
 class UserNotification(models.Model):
+    """Defines a notification for a user regardless of type."""
     recipient = models.ForeignKey(UserAccount, on_delete=models.CASCADE)
     subject = models.CharField(max_length=127)
     description = models.TextField()
@@ -557,7 +558,6 @@ class ConcreteObserver(Observer):
         import sclibrary.notifications as N ## import put here to not create a circular dependency
         if subject.item.is_borrowed:
             N.notify_wishlist_unavailable(subject.item, self.borrower)  ## notifies borrower that the wishlist item is unavailble
-
         else:
             N.notify_wishlist_available(subject.item, self.borrower) ## notifies borrower that the wishlist item is available
 

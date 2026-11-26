@@ -23,13 +23,14 @@ sclibraryconfig = apps.get_app_config("sclibrary")
 
 # Create your views here.
 def send_email(subject, recipient, template, context=None):
-    content = render_to_string(template, context or {})
+    """Sends an email to a user."""
+    content = render_to_string(template, context or {})  # Gets HTML content for the email
     return send_mail(
         subject = subject,
-        message = '',
+        message = '', # Empty since we are sending HTML content
         from_email = appsettings.EMAIL_HOST_USER,
         recipient_list = [recipient],
-        html_message = content,
+        html_message = content, # HTML content from above
     )
 
 def index(request: HttpRequest):
@@ -65,15 +66,15 @@ def change_info(request: HttpRequest):
 
 @login_required
 def change_username(request: HttpRequest):
-    if request.method == "POST":
-        form = UserForm.ChangeUsername(request.POST)
+    if request.method == "POST": # Form submission and username change case
+        form = UserForm.ChangeUsername(request.POST)  # Gets form
         if form.is_valid():
-            newUsername = form.cleaned_data["newUsername1"]
-            request.user.username = newUsername
+            newUsername = form.cleaned_data["newUsername1"] # Gets new username from form
+            request.user.username = newUsername  # Sets new username
             request.user.save()
-            notifications.notify_username_change(request.user)
+            notifications.notify_username_change(request.user) # Notifies user that their username changed
             return redirect("home")
-    else:
+    else:  # Form has yet to be submitted case
         form = UserForm.ChangeUsername()
     return render(request, "sclibrary/page_change_username.html", {"form": form})
 

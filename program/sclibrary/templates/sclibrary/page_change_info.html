@@ -6,7 +6,7 @@
 <li><a class="waves-effect waves-light green btn" href="{% url 'change-username' %}">Change Username</a></li>
 <li><a class="waves-effect waves-light green btn" href="{% url 'change-password' %}">Change Password</a></li>
 <li><a class="waves-effect waves-light green btn" href="{% url 'change-email' %}">Change Email</a></li>
-{% if request.user.lender != None %}
+{% if request.user.user_type == "LENDER" %}
 <li><a class="waves-effect waves-light green btn" href="{% url 'change-library' %}">Change Library</a></li>
 {% endif %}
 </ul>

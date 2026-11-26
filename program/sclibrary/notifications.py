@@ -50,7 +50,7 @@ def notify_overdue(req: M.BorrowRequest):
         )
 
 def notify_wishlist_available(wishlist_item: M.Item, user: M.Borrower):
-    """Notify the user that a wishlist item is now available."""
+    """Notifies the user that a wishlist item is now available."""
     M.UserNotification.objects.create(
         recipient=M.UserAccount.objects.get(id=user.id),
         subject="Wishlist item available",
@@ -58,7 +58,7 @@ def notify_wishlist_available(wishlist_item: M.Item, user: M.Borrower):
     )
 
 def notify_wishlist_unavailable(wishlist_item: M.Item, user: M.Borrower):
-    """Notify the user that a wishlist item is no longer available."""
+    """Notifies the user that a wishlist item is no longer available."""
     M.UserNotification.objects.create(
         recipient=M.UserAccount.objects.get(id=user.id),
         subject="Wishlist item unavailable",
@@ -74,26 +74,28 @@ def notify_lender_new_rating(rating: M.ItemRating):
     )
 
 def notify_username_change(user: M.Lender | M.Borrower):
-    """Notify the user that their username has been changed."""
+    """Notifies the user that their username has been changed."""
     M.UserNotification.objects.create(
-        recipient=M.UserAccount.objects.get(user),
+        recipient=user,
         subject="Username changed",                 
-        description=f"Your username has been changed to \"{user.username}\".",
+        description=f"Your username has been changed to \"{user.username}\".",  # Lets the user know their new username
     )
+    """Sends an email to the user letting them know that their username has been changed."""
     V.send_email(
         subject="Username changed",
         recipient=user.email,
-        template="sclibrary/change_username_email.html",
-        context={"user": user},
+        template="sclibrary/change_username_email.html",  # Emails HTML content of "change_username_email.html", which is defined in templates, to the user
+        context={"user": user},  # For specifically addressing the user in the email  
     )
 
 def notify_password_change(user: M.Lender | M.Borrower):
-    """Notify the user that their password has been changed."""
+    """Notifies the user that their password has been changed."""
     M.UserNotification.objects.create(
-        recipient=M.UserAccount.objects.get(user),
+        recipient=user,
         subject="Password changed",
         description=f"Your password has been changed.",
     )
+    """Sends an email to the user letting them know that their password has been changed."""
     V.send_email(
         subject="Password changed",
         recipient=user.email,
@@ -102,12 +104,13 @@ def notify_password_change(user: M.Lender | M.Borrower):
     )
 
 def notify_email_change(user: M.Lender | M.Borrower):
-    """Notify the user that their email has been changed."""
+    """Notifies the user that their email has been changed."""
     M.UserNotification.objects.create(
-        recipient=M.UserAccount.objects.get(user),
+        recipient=user,
         subject="Email changed",
         description=f"Your email has been changed to \"{user.email}\".",
     )
+    """Sends an email to the user letting them know that their email has been changed."""
     V.send_email(
         subject="Email changed",
         recipient=user.email,
