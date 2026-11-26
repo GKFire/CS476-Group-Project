@@ -1,0 +1,180 @@
+<mxfile host="app.diagrams.net">
+  <diagram id="VBNHf0DfR_cLWNj5EDlX" name="Page-1">
+    <mxGraphModel dx="3288" dy="2421" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="gphYLu0FzMEe-eiXDLSp-4" edge="1" parent="1" source="gphYLu0FzMEe-eiXDLSp-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;labelPadding=0 4;" target="gphYLu0FzMEe-eiXDLSp-3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="gphYLu0FzMEe-eiXDLSp-14" connectable="0" parent="gphYLu0FzMEe-eiXDLSp-4" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];inheritText=1;defaultLabelBackgroundColor=page;labelPadding=0 4;" value="create Item directly" vertex="1">
+          <mxGeometry relative="1" x="-0.0455" y="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="gphYLu0FzMEe-eiXDLSp-25" edge="1" parent="1" source="gphYLu0FzMEe-eiXDLSp-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;labelPadding=0 4;" target="gphYLu0FzMEe-eiXDLSp-24">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="gphYLu0FzMEe-eiXDLSp-26" connectable="0" parent="gphYLu0FzMEe-eiXDLSp-25" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];inheritText=1;defaultLabelBackgroundColor=page;labelPadding=0 4;" value="supplies Form for creating" vertex="1">
+          <mxGeometry relative="1" x="0.0643" y="-2" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="gphYLu0FzMEe-eiXDLSp-1" parent="1" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;ItemFactory&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ default_class: Model&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ instances: pair(str, tuple(Model, Form, UpdateView))&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ appendItemInstance(str, Model, View, View): void&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ removeItemInstance(str): void&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ getItemMethods(str): tuple(Model, Form, UpdateView)&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ createNewItem(str): Form&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ editItem(str): UpdateView&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ getProperItem(Item): Model&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ getProperItems(QuerySet&amp;lt;Item&amp;gt;): QuerySet&amp;lt;Model&amp;gt;&lt;/p&gt;" vertex="1">
+          <mxGeometry height="190" width="360" x="440" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="gphYLu0FzMEe-eiXDLSp-3" parent="1" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;Item::Model&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;&gt;&lt;div&gt;&amp;nbsp;+ library: Library&lt;/div&gt;&lt;div&gt;&amp;nbsp;+ title: str&lt;/div&gt;&lt;div&gt;&amp;nbsp;+ release: Date&lt;/div&gt;&lt;div&gt;&amp;nbsp;+ producer: str&lt;/div&gt;&lt;div&gt;&amp;nbsp;+ condition: str&lt;/div&gt;&lt;div&gt;&amp;nbsp;+ description: str&lt;/div&gt;&lt;div&gt;&amp;nbsp;+ notes: str&lt;/div&gt;&lt;div&gt;&amp;nbsp;+ item_type: Types&lt;/div&gt;&lt;div&gt;&amp;nbsp;+ addedDate: Date&lt;/div&gt;&lt;div&gt;&amp;nbsp;+ lastModified: Date&lt;/div&gt;&lt;div&gt;&amp;nbsp;+ is_visible: bool&lt;/div&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ __str__(): str&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ is_borrowed(): bool&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ get_icon_name(): str&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ get_absolute_url()&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ get_item_type_display(): str&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ get_average_rating(): int&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ get_rating_count(): int&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ get_item_types_list(): list(str)&lt;/p&gt;" vertex="1">
+          <mxGeometry height="370" width="360" x="440" y="410" as="geometry" />
+        </mxCell>
+        <mxCell id="gphYLu0FzMEe-eiXDLSp-11" edge="1" parent="1" source="gphYLu0FzMEe-eiXDLSp-5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;defaultLabelBackgroundColor=page;labelPadding=0 4;dashed=1;" target="gphYLu0FzMEe-eiXDLSp-3">
+          <mxGeometry relative="1" x="0.0386" as="geometry">
+            <Array as="points">
+              <mxPoint x="425" y="840" />
+              <mxPoint x="610" y="840" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="gphYLu0FzMEe-eiXDLSp-5" parent="1" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;Movie::Item&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;&gt;&lt;div&gt;&amp;nbsp;+ objects: MovieManager&lt;/div&gt;&lt;div&gt;&amp;nbsp;+ FORMAT_CHOICES: pair(str, str)&lt;/div&gt;&lt;div&gt;&amp;nbsp;+ AGE_RATING_CHOICES: pair(str, str)&lt;/div&gt;&lt;div&gt;&amp;nbsp;+ item_format: str&lt;/div&gt;&lt;div&gt;&amp;nbsp;+ age_rating: str&lt;/div&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;&gt;&lt;div&gt;&amp;nbsp;+ __str__(): str&lt;/div&gt;&lt;div&gt;&amp;nbsp;+ get_format_display(): str&lt;/div&gt;&lt;div&gt;&amp;nbsp;+ get_age_display(): str&lt;/div&gt;&lt;div&gt;&amp;nbsp;+ save()&lt;/div&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ get_icon_name(): str&lt;/p&gt;" vertex="1">
+          <mxGeometry height="220" width="350" x="250" y="880" as="geometry" />
+        </mxCell>
+        <mxCell id="gphYLu0FzMEe-eiXDLSp-12" edge="1" parent="1" source="gphYLu0FzMEe-eiXDLSp-7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;defaultLabelBackgroundColor=page;labelPadding=0 4;dashed=1;" target="gphYLu0FzMEe-eiXDLSp-3">
+          <mxGeometry relative="1" x="0.0386" as="geometry">
+            <Array as="points">
+              <mxPoint x="815" y="840" />
+              <mxPoint x="630" y="840" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="gphYLu0FzMEe-eiXDLSp-7" parent="1" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;Music:Item&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;&gt;&lt;div&gt;&amp;nbsp;+ objects: MusicManager&lt;/div&gt;&lt;div&gt;&amp;nbsp;+ FORMAT_CHOICES: pair(str, str)&lt;/div&gt;&lt;div&gt;&amp;nbsp;+ AGE_RATING_CHOICES: pair(str, str)&lt;/div&gt;&lt;div&gt;&amp;nbsp;+ item_format: str&lt;/div&gt;&lt;div&gt;&amp;nbsp;+ age_rating: str&lt;/div&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;&gt;&lt;div&gt;&amp;nbsp;+ __str__(): str&lt;/div&gt;&lt;div&gt;&amp;nbsp;+ get_format_display(): str&lt;/div&gt;&lt;div&gt;&amp;nbsp;+ get_age_display(): str&lt;/div&gt;&lt;div&gt;&amp;nbsp;+ save()&lt;/div&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ get_icon_name(): str&lt;/p&gt;" vertex="1">
+          <mxGeometry height="220" width="350" x="640" y="880" as="geometry" />
+        </mxCell>
+        <mxCell id="gphYLu0FzMEe-eiXDLSp-13" edge="1" parent="1" source="gphYLu0FzMEe-eiXDLSp-8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.75;entryY=1;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;labelPadding=0 4;dashed=1;" target="gphYLu0FzMEe-eiXDLSp-3">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1215" y="820" />
+              <mxPoint x="710" y="820" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="gphYLu0FzMEe-eiXDLSp-8" parent="1" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;Book:Item&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;&gt;&lt;div&gt;&amp;nbsp;+ objects: BookManager&lt;/div&gt;&lt;div&gt;&amp;nbsp;+ FORMAT_CHOICES: pair(str, str)&lt;/div&gt;&lt;div&gt;&amp;nbsp;+ AGE_RATING_CHOICES: pair(str, str)&lt;/div&gt;&lt;div&gt;&amp;nbsp;+ item_format: str&lt;/div&gt;&lt;div&gt;&amp;nbsp;+ age_rating: str&lt;/div&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;&gt;&lt;div&gt;&amp;nbsp;+ __str__(): str&lt;/div&gt;&lt;div&gt;&amp;nbsp;+ get_format_display(): str&lt;/div&gt;&lt;div&gt;&amp;nbsp;+ get_age_display(): str&lt;/div&gt;&lt;div&gt;&amp;nbsp;+ save()&lt;/div&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ get_icon_name(): str&lt;/p&gt;" vertex="1">
+          <mxGeometry height="220" width="350" x="1040" y="880" as="geometry" />
+        </mxCell>
+        <mxCell id="gphYLu0FzMEe-eiXDLSp-10" edge="1" parent="1" source="gphYLu0FzMEe-eiXDLSp-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.25;entryY=1;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;labelPadding=0 4;dashed=1;" target="gphYLu0FzMEe-eiXDLSp-3">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="20" y="820" />
+              <mxPoint x="530" y="820" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="gphYLu0FzMEe-eiXDLSp-9" parent="1" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;VideoGame::Item&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;&gt;&lt;div&gt;&amp;nbsp;+ objects: VideoGameManager&lt;/div&gt;&lt;div&gt;&amp;nbsp;+ FORMAT_CHOICES: pair(str, str)&lt;/div&gt;&lt;div&gt;&amp;nbsp;+ AGE_RATING_CHOICES: pair(str, str)&lt;/div&gt;&lt;div&gt;&amp;nbsp;+ item_format: str&lt;/div&gt;&lt;div&gt;&amp;nbsp;+ age_rating: str&lt;/div&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;&gt;&lt;div&gt;&amp;nbsp;+ __str__(): str&lt;/div&gt;&lt;div&gt;&amp;nbsp;+ get_format_display(): str&lt;/div&gt;&lt;div&gt;&amp;nbsp;+ get_age_display(): str&lt;/div&gt;&lt;div&gt;&amp;nbsp;+ save()&lt;/div&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ get_icon_name(): str&lt;/p&gt;" vertex="1">
+          <mxGeometry height="220" width="350" x="-150" y="880" as="geometry" />
+        </mxCell>
+        <mxCell id="gphYLu0FzMEe-eiXDLSp-16" edge="1" parent="1" source="gphYLu0FzMEe-eiXDLSp-15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;defaultLabelBackgroundColor=page;labelPadding=0 4;" target="gphYLu0FzMEe-eiXDLSp-1">
+          <mxGeometry relative="1" x="-0.0292" as="geometry">
+            <Array as="points">
+              <mxPoint x="260" y="60" />
+              <mxPoint x="260" y="180" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="gphYLu0FzMEe-eiXDLSp-17" connectable="0" parent="gphYLu0FzMEe-eiXDLSp-16" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];inheritText=1;defaultLabelBackgroundColor=page;labelPadding=0 4;" value="&lt;div&gt;calls for views to create, edit,&lt;/div&gt;&lt;div&gt;or delete items of specific types&lt;/div&gt;" vertex="1">
+          <mxGeometry relative="1" x="-0.3019" as="geometry">
+            <mxPoint y="65" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="gphYLu0FzMEe-eiXDLSp-15" parent="1" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;lender_views&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ LENDER: UserAccount.Types&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ sclibraryconfig: AppConfig&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ create_item(request): HttpResponse&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ edit_item(request): HttpResponse&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ delete_item(request): HttpResponse&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ viewBorrower(request): HttpResponse&lt;/p&gt;" vertex="1">
+          <mxGeometry height="150" width="280" x="-200" y="-30" as="geometry" />
+        </mxCell>
+        <mxCell id="gphYLu0FzMEe-eiXDLSp-19" edge="1" parent="1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;defaultLabelBackgroundColor=page;labelPadding=0 4;">
+          <mxGeometry relative="1" x="0.0271" as="geometry">
+            <Array as="points">
+              <mxPoint x="110" y="215" />
+              <mxPoint x="110" y="215" />
+            </Array>
+            <mxPoint x="80" y="215" as="sourcePoint" />
+            <mxPoint x="440" y="215" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="gphYLu0FzMEe-eiXDLSp-20" connectable="0" parent="gphYLu0FzMEe-eiXDLSp-19" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];inheritText=1;defaultLabelBackgroundColor=page;labelPadding=0 4;" value="&lt;div&gt;calls for searching or listing items, and&amp;nbsp;&lt;/div&gt;&lt;div&gt;getting their appropriate Model-type instances&lt;/div&gt;" vertex="1">
+          <mxGeometry relative="1" x="0.0021" y="-2" as="geometry">
+            <mxPoint y="-2" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="gphYLu0FzMEe-eiXDLSp-18" parent="1" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;borrower_views&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ BORROWER: UserAccount.Types&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ sclibraryconfig: AppConfig&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ search(request): HttpResponse&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ viewLender(request): HttpResponse&lt;/p&gt;" vertex="1">
+          <mxGeometry height="130" width="280" x="-200" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="gphYLu0FzMEe-eiXDLSp-22" edge="1" parent="1" source="gphYLu0FzMEe-eiXDLSp-21" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.75;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;labelPadding=0 4;" target="gphYLu0FzMEe-eiXDLSp-1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="gphYLu0FzMEe-eiXDLSp-23" connectable="0" parent="gphYLu0FzMEe-eiXDLSp-22" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];inheritText=1;defaultLabelBackgroundColor=page;labelPadding=0 4;" value="&lt;div&gt;calls for listing and viewing items with&lt;/div&gt;&lt;div&gt;their specific Model-type instances&lt;/div&gt;" vertex="1">
+          <mxGeometry relative="1" x="0.0338" y="2" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="gphYLu0FzMEe-eiXDLSp-21" parent="1" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;views&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ USER_TYPES: UserAccount.Types&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ sclibraryconfig: AppConfig&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ home(request): HttpResponse&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;+ viewItem(request): HttpResponse&lt;/p&gt;&lt;p style=&quot;margin:0px;margin-left:4px;&quot;&gt;&lt;br&gt;&lt;/p&gt;" vertex="1">
+          <mxGeometry height="120" width="280" x="-200" y="340" as="geometry" />
+        </mxCell>
+        <mxCell id="gphYLu0FzMEe-eiXDLSp-27" edge="1" parent="1" source="gphYLu0FzMEe-eiXDLSp-24" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;labelPadding=0 4;" target="gphYLu0FzMEe-eiXDLSp-3">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1160" y="595" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="gphYLu0FzMEe-eiXDLSp-28" connectable="0" parent="gphYLu0FzMEe-eiXDLSp-27" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];inheritText=1;defaultLabelBackgroundColor=page;labelPadding=0 4;" value="Creates" vertex="1">
+          <mxGeometry relative="1" x="0.4907" y="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="gphYLu0FzMEe-eiXDLSp-24" parent="1" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;CreateItem::Form&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;&gt;&lt;div&gt;+ title: CharField&lt;/div&gt;&lt;div&gt;+ release: DateField&lt;/div&gt;&lt;div&gt;+ producer: CharField&lt;/div&gt;&lt;div&gt;+ condition: CharField&lt;/div&gt;&lt;div&gt;+ description: CharField&lt;/div&gt;&lt;div&gt;+ notes: CharField&lt;/div&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;&gt;&lt;div&gt;+ clean()&lt;/div&gt;&lt;div&gt;+ save()&lt;/div&gt;" vertex="1">
+          <mxGeometry height="175" width="280" x="1010" y="127.5" as="geometry" />
+        </mxCell>
+        <mxCell id="gphYLu0FzMEe-eiXDLSp-33" edge="1" parent="1" source="gphYLu0FzMEe-eiXDLSp-29" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.25;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;labelPadding=0 4;dashed=1;" target="gphYLu0FzMEe-eiXDLSp-24">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1350" y="13.8" />
+              <mxPoint x="1350" y="171.3" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="gphYLu0FzMEe-eiXDLSp-29" parent="1" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;CreateVideoGameItem::CreateItem&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;&gt;&lt;div&gt;+ item_format: ChoiceField&lt;/div&gt;&lt;div&gt;+ age_rating: ChoiceField&lt;/div&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;&gt;+ save()" vertex="1">
+          <mxGeometry height="107.5" width="280" x="1440" y="-40" as="geometry" />
+        </mxCell>
+        <mxCell id="gphYLu0FzMEe-eiXDLSp-34" edge="1" parent="1" source="gphYLu0FzMEe-eiXDLSp-30" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;defaultLabelBackgroundColor=page;labelPadding=0 4;dashed=1;" target="gphYLu0FzMEe-eiXDLSp-24">
+          <mxGeometry relative="1" x="0.0311" as="geometry">
+            <Array as="points">
+              <mxPoint x="1365" y="173.8" />
+              <mxPoint x="1365" y="210" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="gphYLu0FzMEe-eiXDLSp-30" parent="1" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;CreateMovieItem::CreateItem&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;&gt;&lt;div&gt;+ item_format: ChoiceField&lt;/div&gt;&lt;div&gt;+ age_rating: ChoiceField&lt;/div&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;&gt;+ save()" vertex="1">
+          <mxGeometry height="107.5" width="280" x="1440" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="gphYLu0FzMEe-eiXDLSp-35" edge="1" parent="1" source="gphYLu0FzMEe-eiXDLSp-31" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;defaultLabelBackgroundColor=page;labelPadding=0 4;dashed=1;" target="gphYLu0FzMEe-eiXDLSp-24">
+          <mxGeometry relative="1" x="0.0159" as="geometry">
+            <Array as="points">
+              <mxPoint x="1365" y="333.8" />
+              <mxPoint x="1365" y="220" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="gphYLu0FzMEe-eiXDLSp-31" parent="1" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;CreateMusicItem::CreateItem&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;&gt;&lt;div&gt;+ item_format: ChoiceField&lt;/div&gt;&lt;div&gt;+ age_rating: ChoiceField&lt;/div&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;&gt;+ save()" vertex="1">
+          <mxGeometry height="107.5" width="280" x="1440" y="280" as="geometry" />
+        </mxCell>
+        <mxCell id="gphYLu0FzMEe-eiXDLSp-36" edge="1" parent="1" source="gphYLu0FzMEe-eiXDLSp-32" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=1;entryY=0.75;entryDx=0;entryDy=0;defaultLabelBackgroundColor=page;labelPadding=0 4;dashed=1;" target="gphYLu0FzMEe-eiXDLSp-24">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1350" y="493.8" />
+              <mxPoint x="1350" y="258.8" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="gphYLu0FzMEe-eiXDLSp-32" parent="1" style="verticalAlign=top;align=left;overflow=fill;html=1;whiteSpace=wrap;" value="&lt;p style=&quot;margin:0px;margin-top:4px;text-align:center;&quot;&gt;&lt;b&gt;CreateBookItem::CreateItem&lt;/b&gt;&lt;/p&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;&gt;&lt;div&gt;+ item_format: ChoiceField&lt;/div&gt;&lt;div&gt;+ age_rating: ChoiceField&lt;/div&gt;&lt;hr size=&quot;1&quot; style=&quot;border-style:solid;&quot;&gt;+ save()" vertex="1">
+          <mxGeometry height="107.5" width="280" x="1440" y="440" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

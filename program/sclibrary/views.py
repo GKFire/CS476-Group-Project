@@ -128,7 +128,7 @@ def viewItem(request: HttpRequest, item_pk: int):
         return HttpResponseForbidden("This item has been hidden by it's owner")
 
     borrow_request = SCLibraryModels.BorrowRequest.objects.filter(item=item_pk,status="AC").first()
-    return render(request, "sclibrary/item_view.html", {"item": item, "borrow_request": borrow_request, "can_rate": services.can_rate(request.user, item)})
+    return render(request, "sclibrary/item_view.html", {"item": sclibraryconfig.item_factory.getProperItem(item), "borrow_request": borrow_request, "can_rate": services.can_rate(request.user, item)})
 
 @login_required
 def viewWishlist(request: HttpRequest):
