@@ -2,35 +2,67 @@
 {% block content %}
 <h4>{% if is_lender %}Requests on my items{% else %}My requests{% endif %}</h4>
 <form method="get" action="{% url 'myprofile-requests' %}">
-    <div class="row">
-        <div class="input-field col s9">
-            <input
-                type="search"
-                name="q"
-                id="request-search"
-                value="{{ search_query }}"
-                placeholder="{% if is_lender %}Search item or borrower{% else %}Search item{% endif %}"
-            >
-        </div>
-
-        <div class="col s3">
-            <button type="submit" class="btn teal">
-                Search
-            </button>
-        </div>
+<div class="row">
+    <div class="input-field col s12 m6">
+        <input
+            type="search"
+            name="q"
+            id="request-search"
+            value="{{ search_query }}"
+            placeholder="{% if is_lender %}Search item or borrower{% else %}Search item{% endif %}"
+        >
     </div>
 
-    {% if status == "RQ" or status == "AC" or status == "RJ" or status == "CD" %}
+    <div class="col s12 m4">
+        <label for="request-sort">Sort by</label>
+        <select name="sort" id="request-sort" class="browser-default">
+            <option value="newest" {% if sort == "newest" %}selected{% endif %}>Newest first</option>
+            <option value="oldest" {% if sort == "oldest" %}selected{% endif %}>Oldest first</option>
+            <option value="return_soon" {% if sort == "return_soon" %}selected{% endif %}>Earliest return</option>
+            <option value="return_late" {% if sort == "return_late" %}selected{% endif %}>Latest return</option>
+        </select>
+    </div>
+
+    
+    <div class="col s12 m2" style="padding-top: 25px;">
+        <button type="submit" class="btn teal">
+            Search &amp; Sort
+        </button>
+    </div>
+</div>
+
+{% if status == "RQ" or status == "AC" or status == "RJ" or status == "CD" %}
         <input type="hidden" name="status" value="{{ status }}">
     {% endif %}
 </form>
-<p>
-  <a href="?q={{ search_query|urlencode }}">All</a> |
-  <a href="?status=RQ&q={{ search_query|urlencode }}">Pending</a> |
-  <a href="?status=AC&q={{ search_query|urlencode }}">Ongoing loans</a> |
-  <a href="?status=RJ&q={{ search_query|urlencode }}">Declined</a> |
-  <a href="?status=CD&q={{ search_query|urlencode }}">Concluded</a>
-</p>
+  
+<div style="margin: 20px 0;">
+    <a class="{% if not status %}btn-small teal{% else %}btn-flat{% endif %}"
+       href="?q={{ search_query|urlencode }}&amp;sort={{ sort }}">
+       All
+    </a>
+
+    <a class="{% if status == 'RQ' %}btn-small teal{% else %}btn-flat{% endif %}"
+       href="?status=RQ&amp;q={{ search_query|urlencode }}&amp;sort={{ sort }}">
+       Pending
+    </a>
+
+    <a class="{% if status == 'AC' %}btn-small teal{% else %}btn-flat{% endif %}"
+       href="?status=AC&amp;q={{ search_query|urlencode }}&amp;sort={{ sort }}">
+       Ongoing loans
+    </a>
+
+    <a class="{% if status == 'RJ' %}btn-small teal{% else %}btn-flat{% endif %}"
+       href="?status=RJ&amp;q={{ search_query|urlencode }}&amp;sort={{ sort }}">
+       Declined
+    </a>
+
+    <a class="{% if status == 'CD' %}btn-small teal{% else %}btn-flat{% endif %}"
+       href="?status=CD&amp;q={{ search_query|urlencode }}&amp;sort={{ sort }}">
+       Concluded
+    </a>
+</div>
+
 <table>
   <tr><th>Item</th>{% if is_lender %}<th>Borrower</th>{% endif %}<th>Start</th><th>Return</th><th>Status</th><th></th></tr>
   {% for r in requests %}
@@ -38,9 +70,47 @@
     <td><a href="{% url 'view-item' r.item.id %}">{{ r.item.title }}</a></td>
     {% if is_lender %}<td>{{ r.borrower.username|default:"(deleted user)" }}</td>{% endif %}
     <td>{{ r.start_date }}</td><td>{{ r.return_date }}</td>
-    <td>{{ r.get_status_display }}{% if r.pk in overdue_ids %} <strong>(OVERDUE)</strong>{% endif %}</td>
+    
+<td>
+    {% if r.status == "RQ" %}
+        <span class="chip amber lighten-3">Pending</span>
+    {% elif r.status == "AC" %}
+        <span class="chip green lighten-3">Active</span>
+    {% elif r.status == "RJ" %}
+        <span class="chip red lighten-3">Rejected</span>
+    {% elif r.status == "CD" %}
+        <span class="chip blue lighten-3">Concluded</span>
+    {% endif %}
+
+    {% if r.pk in overdue_ids %}
+        <strong class="red-text text-darken-2">⚠ OVERDUE</strong>
+    {% endif %}
+</td>
+
     <td><a href="{% url 'view-request' r.pk %}">Open</a></td>
   </tr>
-  {% empty %}<tr><td colspan="6">No requests.</td></tr>{% endfor %}
+  
+{% empty %}
+<tr>
+    <td colspan="{% if is_lender %}6{% else %}5{% endif %}"
+        class="center-align"
+        style="padding: 35px;">
+
+        {% if search_query or status %}
+            <h6>No matching requests found.</h6>
+            <p>Try changing your search or status filter.</p>
+            <a href="{% url 'myprofile-requests' %}"
+               class="btn-small teal">
+                Clear filters
+            </a>
+        {% else %}
+            <h6>No requests yet.</h6>
+            <p>Your borrowing requests will appear here.</p>
+        {% endif %}
+
+    </td>
+</tr>
+{% endfor %}
+
 </table>
 {% endblock %}
