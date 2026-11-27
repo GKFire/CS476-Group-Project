@@ -34,6 +34,15 @@
                     </ul>
                 </div>
             </nav>
+
+             {% if messages %}
+                {% for message in messages %}
+                    <div class="card-panel {% if 'error' in message.tags %}red lighten-4 red-text text-darken-4{% else %}green lighten-4 green-text text-darken-4{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+
             <div class="row">
                 <div class="col s2 m2 l1 xl2 teal long lighten-1">
                     <div class="panel">{% block navigation %}{% endblock %}</div>
